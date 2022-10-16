@@ -10,7 +10,7 @@ SupplyBoost have these modules:
 - **Supply**
     - They receive the requests and send them to the factories (use by Supplier).
 - **Manufacture**
-    - They Plan for Production (use by Manufactury).
+    - They Plan for Production (use by Manufacture).
 - **Distribute**
     - The Goods are Delivered by the Retailer (use by Distributor).
 - **Retail**
@@ -18,6 +18,21 @@ SupplyBoost have these modules:
 - **Notification**
   - Send all type of notification(SMS, Email, ...) in other modules.
 
+## Main Workflow
+SupplyBoost have many workflow that run by users. 
+
+### Buy Products from Retailer
+
+Customer view products on the Retail site and create ProductOrder for buying. If the Retailer has products in Stock,  
+create an Invoice for the Delivery Company. Workflow has been finished when delivered products to Customer.
+
+![Buy Product From Retail](resource/BuyProductFromRetail.svg)
+
+**Hint: Each node have 4 parts.** 
+  - Action
+  - Entity 
+  - Module (Microservice)
+  - Description
 
 ## Technical Stack
 
