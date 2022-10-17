@@ -1,0 +1,9 @@
+export enum CompanyType {
+  SUPPLIER = 'SUPPLIER',
+
+  RETAILER = 'RETAILER',
+
+  DISTRIBUTOR = 'DISTRIBUTOR',
+
+  MANUFACTURER = 'MANUFACTURER',
+}

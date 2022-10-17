@@ -1,0 +1,11 @@
+{
+  "coreApp": {
+    "CompanyType": {
+      "null": "",
+      "SUPPLIER": "SUPPLIER",
+      "RETAILER": "RETAILER",
+      "DISTRIBUTOR": "DISTRIBUTOR",
+      "MANUFACTURER": "MANUFACTURER"
+    }
+  }
+}

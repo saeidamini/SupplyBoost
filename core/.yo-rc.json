@@ -1,0 +1,80 @@
+{
+  "generator-jhipster": {
+    "applicationIndex": 0,
+    "applicationType": "gateway",
+    "applications": {
+      "distribute": {
+        "applicationIndex": 2,
+        "clientFramework": "no",
+        "serverPort": "8082"
+      },
+      "notification": {
+        "applicationIndex": 3,
+        "clientFramework": "no",
+        "serverPort": "8083"
+      },
+      "retail": {
+        "applicationIndex": 1,
+        "clientFramework": "no",
+        "serverPort": "8081"
+      }
+    },
+    "authenticationType": "jwt",
+    "baseName": "core",
+    "blueprints": [],
+    "buildTool": "maven",
+    "cacheProvider": "no",
+    "clientFramework": "react",
+    "clientPackageManager": "npm",
+    "clientTheme": "none",
+    "clientThemeVariant": "",
+    "creationTimestamp": 1665992785682,
+    "databaseType": "sql",
+    "devDatabaseType": "h2Memory",
+    "devServerPort": 9060,
+    "dtoSuffix": "DTO",
+    "enableGradleEnterprise": false,
+    "enableHibernateCache": false,
+    "enableSwaggerCodegen": false,
+    "enableTranslation": true,
+    "entities": [
+      "Shipment",
+      "Inventory",
+      "Invoice",
+      "Notification",
+      "ProductOrder",
+      "Customer",
+      "OrderItem",
+      "ProductCategory",
+      "Company",
+      "Product"
+    ],
+    "entitySuffix": "",
+    "gradleEnterpriseHost": "",
+    "jhiPrefix": "scm",
+    "jhipsterVersion": "7.9.3",
+    "jwtSecretKey": "NTI3OGJlMTExZGE4NDEwNmNlMzQzYjg1NTFhOTY1ZDI5MWRkZmEzYzUwNjQwNGZmYTg1ZDY2ZGM2YTFjMDU2NDE5N2FjZDgyMWZmMDcxYmM4Yzc4MjI0NjUzOTk1YmM3MTc5ZGNmOWRhZDBhZWVjODg0YzVlOWE3YzMzMmZkNjI=",
+    "languages": ["en", "fa", "de"],
+    "lastLiquibaseTimestamp": 1665993385000,
+    "messageBroker": false,
+    "monorepository": true,
+    "nativeLanguage": "en",
+    "otherModules": [],
+    "packageFolder": "org/smartmade/supplyboost/core",
+    "packageName": "org.smartmade.supplyboost.core",
+    "pages": [],
+    "prodDatabaseType": "postgresql",
+    "reactive": true,
+    "searchEngine": "elasticsearch",
+    "serverPort": "8080",
+    "serviceDiscoveryType": "eureka",
+    "skipCheckLengthOfIdentifier": false,
+    "skipClient": false,
+    "skipCommitHook": true,
+    "skipFakeData": false,
+    "skipUserManagement": false,
+    "testFrameworks": ["cypress"],
+    "websocket": false,
+    "withAdminUi": true
+  }
+}

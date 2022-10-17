@@ -1,0 +1,31 @@
+{
+  "coreApp": {
+    "distributeShipment": {
+      "home": {
+        "title": "Shipments",
+        "refreshListLabel": "Liste aktualisieren",
+        "createLabel": "Shipment erstellen",
+        "createOrEditLabel": "Shipment erstellen oder bearbeiten",
+        "notFound": "Keine Shipments gefunden"
+      },
+      "delete": {
+        "question": "Soll Shipment {{ id }} wirklich dauerhaft gelöscht werden?"
+      },
+      "detail": {
+        "title": "Shipment"
+      },
+      "id": "ID",
+      "trackingCode": "Tracking Code",
+      "date": "Date",
+      "details": "Details",
+      "invoice": "Invoice"
+    }
+  },
+  "distributeApp": {
+    "distributeShipment": {
+      "created": "Shipment erstellt mit ID {{ param }}",
+      "updated": "Shipment aktualisiert mit ID {{ param }}",
+      "deleted": "Shipment gelöscht mit ID {{ param }}"
+    }
+  }
+}
