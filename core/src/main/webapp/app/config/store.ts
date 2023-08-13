@@ -1,14 +1,14 @@
-import { AnyAction, configureStore, ThunkAction, Action, Store, Reducer, ReducersMapObject, combineReducers } from '@reduxjs/toolkit';
+import { AnyAction, configureStore, ThunkAction } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
-import { loadingBarMiddleware } from 'react-redux-loading-bar';
 
-import sharedReducers from 'app/shared/reducers';
+import reducer from 'app/shared/reducers';
 import errorMiddleware from './error-middleware';
 import notificationMiddleware from './notification-middleware';
 import loggerMiddleware from './logger-middleware';
+import { loadingBarMiddleware } from 'react-redux-loading-bar';
 
 const store = configureStore({
-  reducer: sharedReducers,
+  reducer,
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
       serializableCheck: {
@@ -18,32 +18,7 @@ const store = configureStore({
     }).concat(errorMiddleware, notificationMiddleware, loadingBarMiddleware(), loggerMiddleware),
 });
 
-// Allow lazy loading of reducers https://github.com/reduxjs/redux/blob/master/docs/usage/CodeSplitting.md
-interface InjectableStore<S = any, A extends Action = AnyAction> extends Store<S, A> {
-  asyncReducers: ReducersMapObject;
-  injectReducer(key: string, reducer: Reducer): void;
-}
-
-export function configureInjectableStore(storeToInject) {
-  const injectableStore = storeToInject as InjectableStore<any, any>;
-  injectableStore.asyncReducers = {};
-
-  injectableStore.injectReducer = (key, asyncReducer) => {
-    injectableStore.asyncReducers[key] = asyncReducer;
-    injectableStore.replaceReducer(
-      combineReducers({
-        ...sharedReducers,
-        ...injectableStore.asyncReducers,
-      })
-    );
-  };
-
-  return injectableStore;
-}
-
-const injectableStore = configureInjectableStore(store);
-
-const getStore = () => injectableStore;
+const getStore = () => store;
 
 export type IRootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

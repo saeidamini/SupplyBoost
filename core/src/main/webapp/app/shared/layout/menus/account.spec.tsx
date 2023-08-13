@@ -1,7 +1,9 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { Router } from 'react-router-dom';
+import { createMemoryHistory } from 'history';
 
+import { getLoginUrl } from 'app/shared/util/url-utils';
 import { AccountMenu } from './account';
 
 describe('AccountMenu', () => {
@@ -9,10 +11,11 @@ describe('AccountMenu', () => {
 
   const authenticatedWrapper = () => {
     if (!mountedWrapper) {
+      const history = createMemoryHistory();
       const { container } = render(
-        <MemoryRouter>
+        <Router history={history}>
           <AccountMenu isAuthenticated />
-        </MemoryRouter>
+        </Router>
       );
       mountedWrapper = container.innerHTML;
     }
@@ -20,10 +23,11 @@ describe('AccountMenu', () => {
   };
   const guestWrapper = () => {
     if (!mountedWrapper) {
+      const history = createMemoryHistory();
       const { container } = (mountedWrapper = render(
-        <MemoryRouter>
+        <Router history={history}>
           <AccountMenu />
-        </MemoryRouter>
+        </Router>
       ));
       mountedWrapper = container.innerHTML;
     }
@@ -46,7 +50,7 @@ describe('AccountMenu', () => {
   it('Renders a guest AccountMenu component', () => {
     const html = guestWrapper();
 
-    expect(html).toContain('/login');
+    expect(html).toContain(getLoginUrl());
     expect(html).not.toContain('/logout');
   });
 });

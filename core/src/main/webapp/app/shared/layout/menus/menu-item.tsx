@@ -5,21 +5,20 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 
 export interface IMenuItem {
-  children: React.ReactNode;
   icon: IconProp;
   to: string;
   id?: string;
   'data-cy'?: string;
 }
 
-const MenuItem = (props: IMenuItem) => {
-  const { to, icon, id, children } = props;
+export default class MenuItem extends React.Component<IMenuItem> {
+  render() {
+    const { to, icon, id, children } = this.props;
 
-  return (
-    <DropdownItem tag={Link} to={to} id={id} data-cy={props['data-cy']}>
-      <FontAwesomeIcon icon={icon} fixedWidth /> {children}
-    </DropdownItem>
-  );
-};
-
-export default MenuItem;
+    return (
+      <DropdownItem tag={Link} to={to} id={id} data-cy={this.props['data-cy']}>
+        <FontAwesomeIcon icon={icon} fixedWidth /> {children}
+      </DropdownItem>
+    );
+  }
+}

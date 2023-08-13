@@ -1,24 +1,21 @@
 import React, { useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Row, Col } from 'reactstrap';
 import { Translate, TextFormat } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+import { getEntity } from './product-order.reducer';
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-import { getEntity } from './product-order.reducer';
-
-export const ProductOrderDetail = () => {
+export const ProductOrderDetail = (props: RouteComponentProps<{ id: string }>) => {
   const dispatch = useAppDispatch();
 
-  const { id } = useParams<'id'>();
-
   useEffect(() => {
-    dispatch(getEntity(id));
+    dispatch(getEntity(props.match.params.id));
   }, []);
 
-  const productOrderEntity = useAppSelector(state => state.core.productOrder.entity);
+  const productOrderEntity = useAppSelector(state => state.productOrder.entity);
   return (
     <Row>
       <Col md="8">
@@ -61,15 +58,15 @@ export const ProductOrderDetail = () => {
           </dt>
           <dd>{productOrderEntity.invoiceId}</dd>
           <dt>
-            <span id="customer">
-              <Translate contentKey="coreApp.retailProductOrder.customer">Customer</Translate>
+            <span id="customerName">
+              <Translate contentKey="coreApp.retailProductOrder.customerName">Customer Name</Translate>
             </span>
           </dt>
-          <dd>{productOrderEntity.customer}</dd>
+          <dd>{productOrderEntity.customerName}</dd>
           <dt>
             <Translate contentKey="coreApp.retailProductOrder.customer">Customer</Translate>
           </dt>
-          <dd>{productOrderEntity.customer ? productOrderEntity.customer.lastname : ''}</dd>
+          <dd>{productOrderEntity.customer ? productOrderEntity.customer.lastName : ''}</dd>
         </dl>
         <Button tag={Link} to="/product-order" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" />{' '}

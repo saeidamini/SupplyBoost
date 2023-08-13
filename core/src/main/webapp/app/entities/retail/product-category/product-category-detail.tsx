@@ -1,24 +1,21 @@
 import React, { useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Row, Col } from 'reactstrap';
 import { Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+import { getEntity } from './product-category.reducer';
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-import { getEntity } from './product-category.reducer';
-
-export const ProductCategoryDetail = () => {
+export const ProductCategoryDetail = (props: RouteComponentProps<{ id: string }>) => {
   const dispatch = useAppDispatch();
 
-  const { id } = useParams<'id'>();
-
   useEffect(() => {
-    dispatch(getEntity(id));
+    dispatch(getEntity(props.match.params.id));
   }, []);
 
-  const productCategoryEntity = useAppSelector(state => state.core.productCategory.entity);
+  const productCategoryEntity = useAppSelector(state => state.productCategory.entity);
   return (
     <Row>
       <Col md="8">

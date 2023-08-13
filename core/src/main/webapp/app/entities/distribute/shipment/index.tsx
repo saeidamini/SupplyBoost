@@ -1,23 +1,23 @@
 import React from 'react';
-import { Route } from 'react-router-dom';
+import { Switch } from 'react-router-dom';
 
-import ErrorBoundaryRoutes from 'app/shared/error/error-boundary-routes';
+import ErrorBoundaryRoute from 'app/shared/error/error-boundary-route';
 
 import Shipment from './shipment';
 import ShipmentDetail from './shipment-detail';
 import ShipmentUpdate from './shipment-update';
 import ShipmentDeleteDialog from './shipment-delete-dialog';
 
-const ShipmentRoutes = () => (
-  <ErrorBoundaryRoutes>
-    <Route index element={<Shipment />} />
-    <Route path="new" element={<ShipmentUpdate />} />
-    <Route path=":id">
-      <Route index element={<ShipmentDetail />} />
-      <Route path="edit" element={<ShipmentUpdate />} />
-      <Route path="delete" element={<ShipmentDeleteDialog />} />
-    </Route>
-  </ErrorBoundaryRoutes>
+const Routes = ({ match }) => (
+  <>
+    <Switch>
+      <ErrorBoundaryRoute exact path={`${match.url}/new`} component={ShipmentUpdate} />
+      <ErrorBoundaryRoute exact path={`${match.url}/:id/edit`} component={ShipmentUpdate} />
+      <ErrorBoundaryRoute exact path={`${match.url}/:id`} component={ShipmentDetail} />
+      <ErrorBoundaryRoute path={match.url} component={Shipment} />
+    </Switch>
+    <ErrorBoundaryRoute exact path={`${match.url}/:id/delete`} component={ShipmentDeleteDialog} />
+  </>
 );
 
-export default ShipmentRoutes;
+export default Routes;

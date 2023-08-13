@@ -11,8 +11,5 @@ public class JHipsterBlockHoundIntegration implements BlockHoundIntegration {
         builder.allowBlockingCallsInside("reactor.core.scheduler.BoundedElasticScheduler$BoundedState", "dispose");
         builder.allowBlockingCallsInside("reactor.core.scheduler.BoundedElasticScheduler", "schedule");
         builder.allowBlockingCallsInside("org.springframework.validation.beanvalidation.SpringValidatorAdapter", "validate");
-        builder.allowBlockingCallsInside("org.smartmade.supplyboost.core.service.MailService", "sendEmailFromTemplate");
-        builder.allowBlockingCallsInside("org.smartmade.supplyboost.core.security.DomainUserDetailsService", "createSpringSecurityUser");
-        builder.allowBlockingCallsInside("org.elasticsearch.client.indices.CreateIndexRequest", "settings");
     }
 }

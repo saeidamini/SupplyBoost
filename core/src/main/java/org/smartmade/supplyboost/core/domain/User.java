@@ -2,7 +2,6 @@ package org.smartmade.supplyboost.core.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
-import java.time.Instant;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
@@ -23,23 +22,18 @@ import org.springframework.data.relational.core.mapping.Table;
  */
 @Table("scm_user")
 @org.springframework.data.elasticsearch.annotations.Document(indexName = "user")
-public class User extends AbstractAuditingEntity<Long> implements Serializable {
+public class User extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
-    private Long id;
+    @org.springframework.data.elasticsearch.annotations.Field(type = FieldType.Keyword)
+    private String id;
 
     @NotNull
     @Pattern(regexp = Constants.LOGIN_REGEX)
     @Size(min = 1, max = 50)
     private String login;
-
-    @JsonIgnore
-    @NotNull
-    @Size(min = 60, max = 60)
-    @Column("password_hash")
-    private String password;
 
     @Size(max = 50)
     @Column("first_name")
@@ -64,28 +58,15 @@ public class User extends AbstractAuditingEntity<Long> implements Serializable {
     @Column("image_url")
     private String imageUrl;
 
-    @Size(max = 20)
-    @Column("activation_key")
-    @JsonIgnore
-    private String activationKey;
-
-    @Size(max = 20)
-    @Column("reset_key")
-    @JsonIgnore
-    private String resetKey;
-
-    @Column("reset_date")
-    private Instant resetDate = null;
-
     @JsonIgnore
     @Transient
     private Set<Authority> authorities = new HashSet<>();
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -96,14 +77,6 @@ public class User extends AbstractAuditingEntity<Long> implements Serializable {
     // Lowercase the login before saving it in database
     public void setLogin(String login) {
         this.login = StringUtils.lowerCase(login, Locale.ENGLISH);
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getFirstName() {
@@ -144,30 +117,6 @@ public class User extends AbstractAuditingEntity<Long> implements Serializable {
 
     public void setActivated(boolean activated) {
         this.activated = activated;
-    }
-
-    public String getActivationKey() {
-        return activationKey;
-    }
-
-    public void setActivationKey(String activationKey) {
-        this.activationKey = activationKey;
-    }
-
-    public String getResetKey() {
-        return resetKey;
-    }
-
-    public void setResetKey(String resetKey) {
-        this.resetKey = resetKey;
-    }
-
-    public Instant getResetDate() {
-        return resetDate;
-    }
-
-    public void setResetDate(Instant resetDate) {
-        this.resetDate = resetDate;
     }
 
     public String getLangKey() {
@@ -214,7 +163,6 @@ public class User extends AbstractAuditingEntity<Long> implements Serializable {
             ", imageUrl='" + imageUrl + '\'' +
             ", activated='" + activated + '\'' +
             ", langKey='" + langKey + '\'' +
-            ", activationKey='" + activationKey + '\'' +
             "}";
     }
 }

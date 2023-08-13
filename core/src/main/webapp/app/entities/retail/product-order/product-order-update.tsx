@@ -1,43 +1,38 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Row, Col, FormText } from 'reactstrap';
 import { isNumber, Translate, translate, ValidatedField, ValidatedForm } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+import { ICustomer } from 'app/shared/model/retail/customer.model';
+import { getEntities as getCustomers } from 'app/entities/retail/customer/customer.reducer';
+import { getEntity, updateEntity, createEntity, reset } from './product-order.reducer';
+import { IProductOrder } from 'app/shared/model/retail/product-order.model';
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
 import { mapIdList } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
-
-import { ICustomer } from 'app/shared/model/retail/customer.model';
-import { getEntities as getCustomers } from 'app/entities/retail/customer/customer.reducer';
-import { IProductOrder } from 'app/shared/model/retail/product-order.model';
 import { OrderStatus } from 'app/shared/model/enumerations/order-status.model';
-import { getEntity, updateEntity, createEntity, reset } from './product-order.reducer';
 
-export const ProductOrderUpdate = () => {
+export const ProductOrderUpdate = (props: RouteComponentProps<{ id: string }>) => {
   const dispatch = useAppDispatch();
 
-  const navigate = useNavigate();
+  const [isNew] = useState(!props.match.params || !props.match.params.id);
 
-  const { id } = useParams<'id'>();
-  const isNew = id === undefined;
-
-  const customers = useAppSelector(state => state.core.customer.entities);
-  const productOrderEntity = useAppSelector(state => state.core.productOrder.entity);
-  const loading = useAppSelector(state => state.core.productOrder.loading);
-  const updating = useAppSelector(state => state.core.productOrder.updating);
-  const updateSuccess = useAppSelector(state => state.core.productOrder.updateSuccess);
+  const customers = useAppSelector(state => state.customer.entities);
+  const productOrderEntity = useAppSelector(state => state.productOrder.entity);
+  const loading = useAppSelector(state => state.productOrder.loading);
+  const updating = useAppSelector(state => state.productOrder.updating);
+  const updateSuccess = useAppSelector(state => state.productOrder.updateSuccess);
   const orderStatusValues = Object.keys(OrderStatus);
-
   const handleClose = () => {
-    navigate('/product-order' + location.search);
+    props.history.push('/product-order' + props.location.search);
   };
 
   useEffect(() => {
     if (isNew) {
       dispatch(reset());
     } else {
-      dispatch(getEntity(id));
+      dispatch(getEntity(props.match.params.id));
     }
 
     dispatch(getCustomers({}));
@@ -144,10 +139,10 @@ export const ProductOrderUpdate = () => {
                 type="text"
               />
               <ValidatedField
-                label={translate('coreApp.retailProductOrder.customer')}
-                id="product-order-customer"
-                name="customer"
-                data-cy="customer"
+                label={translate('coreApp.retailProductOrder.customerName')}
+                id="product-order-customerName"
+                name="customerName"
+                data-cy="customerName"
                 type="text"
                 validate={{
                   required: { value: true, message: translate('entity.validation.required') },
@@ -165,7 +160,7 @@ export const ProductOrderUpdate = () => {
                 {customers
                   ? customers.map(otherEntity => (
                       <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.lastname}
+                        {otherEntity.lastName}
                       </option>
                     ))
                   : null}

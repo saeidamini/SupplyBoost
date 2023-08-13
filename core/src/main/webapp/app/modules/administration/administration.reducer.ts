@@ -80,13 +80,13 @@ export const AdministrationSlice = createSlice({
   initialState: initialState as AdministrationState,
   reducers: {},
   extraReducers(builder) {
+    builder.addCase(getGatewayRoutes.fulfilled, (state, action) => {
+      state.loading = false;
+      state.gateway = {
+        routes: action.payload.data,
+      };
+    });
     builder
-      .addCase(getGatewayRoutes.fulfilled, (state, action) => {
-        state.loading = false;
-        state.gateway = {
-          routes: action.payload.data,
-        };
-      })
       .addCase(getSystemHealth.fulfilled, (state, action) => {
         state.loading = false;
         state.health = action.payload.data;

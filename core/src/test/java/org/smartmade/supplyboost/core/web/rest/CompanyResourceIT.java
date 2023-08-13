@@ -1,21 +1,21 @@
 package org.smartmade.supplyboost.core.web.rest;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.csrf;
 
 import java.time.Duration;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
-import org.apache.commons.collections4.IterableUtils;
-import org.assertj.core.util.IterableUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.smartmade.supplyboost.core.IntegrationTest;
 import org.smartmade.supplyboost.core.domain.Company;
 import org.smartmade.supplyboost.core.domain.enumeration.CompanyType;
@@ -35,6 +35,7 @@ import reactor.core.publisher.Mono;
  * Integration tests for the {@link CompanyResource} REST controller.
  */
 @IntegrationTest
+@ExtendWith(MockitoExtension.class)
 @AutoConfigureWebTestClient(timeout = IntegrationTest.DEFAULT_ENTITY_TIMEOUT)
 @WithMockUser
 class CompanyResourceIT {
@@ -79,8 +80,13 @@ class CompanyResourceIT {
     @Autowired
     private CompanyRepository companyRepository;
 
+    /**
+     * This repository is mocked in the org.smartmade.supplyboost.core.repository.search test package.
+     *
+     * @see org.smartmade.supplyboost.core.repository.search.CompanySearchRepositoryMockConfiguration
+     */
     @Autowired
-    private CompanySearchRepository companySearchRepository;
+    private CompanySearchRepository mockCompanySearchRepository;
 
     @Autowired
     private EntityManager em;
@@ -145,10 +151,9 @@ class CompanyResourceIT {
         deleteEntities(em);
     }
 
-    @AfterEach
-    public void cleanupElasticSearchRepository() {
-        companySearchRepository.deleteAll().block();
-        assertThat(companySearchRepository.count().block()).isEqualTo(0);
+    @BeforeEach
+    public void setupCsrf() {
+        webTestClient = webTestClient.mutateWith(csrf());
     }
 
     @BeforeEach
@@ -160,7 +165,8 @@ class CompanyResourceIT {
     @Test
     void createCompany() throws Exception {
         int databaseSizeBeforeCreate = companyRepository.findAll().collectList().block().size();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(companySearchRepository.findAll().collectList().block());
+        // Configure the mock search repository
+        when(mockCompanySearchRepository.save(any())).thenAnswer(invocation -> Mono.just(invocation.getArgument(0)));
         // Create the Company
         webTestClient
             .post()
@@ -174,12 +180,6 @@ class CompanyResourceIT {
         // Validate the Company in the database
         List<Company> companyList = companyRepository.findAll().collectList().block();
         assertThat(companyList).hasSize(databaseSizeBeforeCreate + 1);
-        await()
-            .atMost(5, TimeUnit.SECONDS)
-            .untilAsserted(() -> {
-                int searchDatabaseSizeAfter = IterableUtil.sizeOf(companySearchRepository.findAll().collectList().block());
-                assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore + 1);
-            });
         Company testCompany = companyList.get(companyList.size() - 1);
         assertThat(testCompany.getFirstName()).isEqualTo(DEFAULT_FIRST_NAME);
         assertThat(testCompany.getLastName()).isEqualTo(DEFAULT_LAST_NAME);
@@ -191,6 +191,9 @@ class CompanyResourceIT {
         assertThat(testCompany.getCity()).isEqualTo(DEFAULT_CITY);
         assertThat(testCompany.getCountry()).isEqualTo(DEFAULT_COUNTRY);
         assertThat(testCompany.getCompanyType()).isEqualTo(DEFAULT_COMPANY_TYPE);
+
+        // Validate the Company in Elasticsearch
+        verify(mockCompanySearchRepository, times(1)).save(testCompany);
     }
 
     @Test
@@ -199,7 +202,6 @@ class CompanyResourceIT {
         company.setId(1L);
 
         int databaseSizeBeforeCreate = companyRepository.findAll().collectList().block().size();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(companySearchRepository.findAll().collectList().block());
 
         // An entity with an existing ID cannot be created, so this API call must fail
         webTestClient
@@ -214,14 +216,14 @@ class CompanyResourceIT {
         // Validate the Company in the database
         List<Company> companyList = companyRepository.findAll().collectList().block();
         assertThat(companyList).hasSize(databaseSizeBeforeCreate);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(companySearchRepository.findAll().collectList().block());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
+
+        // Validate the Company in Elasticsearch
+        verify(mockCompanySearchRepository, times(0)).save(company);
     }
 
     @Test
     void checkFirstNameIsRequired() throws Exception {
         int databaseSizeBeforeTest = companyRepository.findAll().collectList().block().size();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(companySearchRepository.findAll().collectList().block());
         // set the field null
         company.setFirstName(null);
 
@@ -238,14 +240,11 @@ class CompanyResourceIT {
 
         List<Company> companyList = companyRepository.findAll().collectList().block();
         assertThat(companyList).hasSize(databaseSizeBeforeTest);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(companySearchRepository.findAll().collectList().block());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     void checkLastNameIsRequired() throws Exception {
         int databaseSizeBeforeTest = companyRepository.findAll().collectList().block().size();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(companySearchRepository.findAll().collectList().block());
         // set the field null
         company.setLastName(null);
 
@@ -262,14 +261,11 @@ class CompanyResourceIT {
 
         List<Company> companyList = companyRepository.findAll().collectList().block();
         assertThat(companyList).hasSize(databaseSizeBeforeTest);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(companySearchRepository.findAll().collectList().block());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     void checkGenderIsRequired() throws Exception {
         int databaseSizeBeforeTest = companyRepository.findAll().collectList().block().size();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(companySearchRepository.findAll().collectList().block());
         // set the field null
         company.setGender(null);
 
@@ -286,14 +282,11 @@ class CompanyResourceIT {
 
         List<Company> companyList = companyRepository.findAll().collectList().block();
         assertThat(companyList).hasSize(databaseSizeBeforeTest);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(companySearchRepository.findAll().collectList().block());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     void checkEmailIsRequired() throws Exception {
         int databaseSizeBeforeTest = companyRepository.findAll().collectList().block().size();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(companySearchRepository.findAll().collectList().block());
         // set the field null
         company.setEmail(null);
 
@@ -310,14 +303,11 @@ class CompanyResourceIT {
 
         List<Company> companyList = companyRepository.findAll().collectList().block();
         assertThat(companyList).hasSize(databaseSizeBeforeTest);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(companySearchRepository.findAll().collectList().block());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     void checkPhoneIsRequired() throws Exception {
         int databaseSizeBeforeTest = companyRepository.findAll().collectList().block().size();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(companySearchRepository.findAll().collectList().block());
         // set the field null
         company.setPhone(null);
 
@@ -334,14 +324,11 @@ class CompanyResourceIT {
 
         List<Company> companyList = companyRepository.findAll().collectList().block();
         assertThat(companyList).hasSize(databaseSizeBeforeTest);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(companySearchRepository.findAll().collectList().block());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     void checkAddressLine1IsRequired() throws Exception {
         int databaseSizeBeforeTest = companyRepository.findAll().collectList().block().size();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(companySearchRepository.findAll().collectList().block());
         // set the field null
         company.setAddressLine1(null);
 
@@ -358,14 +345,11 @@ class CompanyResourceIT {
 
         List<Company> companyList = companyRepository.findAll().collectList().block();
         assertThat(companyList).hasSize(databaseSizeBeforeTest);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(companySearchRepository.findAll().collectList().block());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     void checkCityIsRequired() throws Exception {
         int databaseSizeBeforeTest = companyRepository.findAll().collectList().block().size();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(companySearchRepository.findAll().collectList().block());
         // set the field null
         company.setCity(null);
 
@@ -382,14 +366,11 @@ class CompanyResourceIT {
 
         List<Company> companyList = companyRepository.findAll().collectList().block();
         assertThat(companyList).hasSize(databaseSizeBeforeTest);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(companySearchRepository.findAll().collectList().block());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     void checkCountryIsRequired() throws Exception {
         int databaseSizeBeforeTest = companyRepository.findAll().collectList().block().size();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(companySearchRepository.findAll().collectList().block());
         // set the field null
         company.setCountry(null);
 
@@ -406,14 +387,11 @@ class CompanyResourceIT {
 
         List<Company> companyList = companyRepository.findAll().collectList().block();
         assertThat(companyList).hasSize(databaseSizeBeforeTest);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(companySearchRepository.findAll().collectList().block());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     void checkCompanyTypeIsRequired() throws Exception {
         int databaseSizeBeforeTest = companyRepository.findAll().collectList().block().size();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(companySearchRepository.findAll().collectList().block());
         // set the field null
         company.setCompanyType(null);
 
@@ -430,8 +408,6 @@ class CompanyResourceIT {
 
         List<Company> companyList = companyRepository.findAll().collectList().block();
         assertThat(companyList).hasSize(databaseSizeBeforeTest);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(companySearchRepository.findAll().collectList().block());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
@@ -562,13 +538,13 @@ class CompanyResourceIT {
     }
 
     @Test
-    void putExistingCompany() throws Exception {
+    void putNewCompany() throws Exception {
+        // Configure the mock search repository
+        when(mockCompanySearchRepository.save(any())).thenAnswer(invocation -> Mono.just(invocation.getArgument(0)));
         // Initialize the database
         companyRepository.save(company).block();
 
         int databaseSizeBeforeUpdate = companyRepository.findAll().collectList().block().size();
-        companySearchRepository.save(company).block();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(companySearchRepository.findAll().collectList().block());
 
         // Update the company
         Company updatedCompany = companyRepository.findById(company.getId()).block();
@@ -607,30 +583,14 @@ class CompanyResourceIT {
         assertThat(testCompany.getCity()).isEqualTo(UPDATED_CITY);
         assertThat(testCompany.getCountry()).isEqualTo(UPDATED_COUNTRY);
         assertThat(testCompany.getCompanyType()).isEqualTo(UPDATED_COMPANY_TYPE);
-        await()
-            .atMost(5, TimeUnit.SECONDS)
-            .untilAsserted(() -> {
-                int searchDatabaseSizeAfter = IterableUtil.sizeOf(companySearchRepository.findAll().collectList().block());
-                assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
-                List<Company> companySearchList = IterableUtils.toList(companySearchRepository.findAll().collectList().block());
-                Company testCompanySearch = companySearchList.get(searchDatabaseSizeAfter - 1);
-                assertThat(testCompanySearch.getFirstName()).isEqualTo(UPDATED_FIRST_NAME);
-                assertThat(testCompanySearch.getLastName()).isEqualTo(UPDATED_LAST_NAME);
-                assertThat(testCompanySearch.getGender()).isEqualTo(UPDATED_GENDER);
-                assertThat(testCompanySearch.getEmail()).isEqualTo(UPDATED_EMAIL);
-                assertThat(testCompanySearch.getPhone()).isEqualTo(UPDATED_PHONE);
-                assertThat(testCompanySearch.getAddressLine1()).isEqualTo(UPDATED_ADDRESS_LINE_1);
-                assertThat(testCompanySearch.getAddressLine2()).isEqualTo(UPDATED_ADDRESS_LINE_2);
-                assertThat(testCompanySearch.getCity()).isEqualTo(UPDATED_CITY);
-                assertThat(testCompanySearch.getCountry()).isEqualTo(UPDATED_COUNTRY);
-                assertThat(testCompanySearch.getCompanyType()).isEqualTo(UPDATED_COMPANY_TYPE);
-            });
+
+        // Validate the Company in Elasticsearch
+        verify(mockCompanySearchRepository).save(testCompany);
     }
 
     @Test
     void putNonExistingCompany() throws Exception {
         int databaseSizeBeforeUpdate = companyRepository.findAll().collectList().block().size();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(companySearchRepository.findAll().collectList().block());
         company.setId(count.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
@@ -646,14 +606,14 @@ class CompanyResourceIT {
         // Validate the Company in the database
         List<Company> companyList = companyRepository.findAll().collectList().block();
         assertThat(companyList).hasSize(databaseSizeBeforeUpdate);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(companySearchRepository.findAll().collectList().block());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
+
+        // Validate the Company in Elasticsearch
+        verify(mockCompanySearchRepository, times(0)).save(company);
     }
 
     @Test
     void putWithIdMismatchCompany() throws Exception {
         int databaseSizeBeforeUpdate = companyRepository.findAll().collectList().block().size();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(companySearchRepository.findAll().collectList().block());
         company.setId(count.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
@@ -669,14 +629,14 @@ class CompanyResourceIT {
         // Validate the Company in the database
         List<Company> companyList = companyRepository.findAll().collectList().block();
         assertThat(companyList).hasSize(databaseSizeBeforeUpdate);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(companySearchRepository.findAll().collectList().block());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
+
+        // Validate the Company in Elasticsearch
+        verify(mockCompanySearchRepository, times(0)).save(company);
     }
 
     @Test
     void putWithMissingIdPathParamCompany() throws Exception {
         int databaseSizeBeforeUpdate = companyRepository.findAll().collectList().block().size();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(companySearchRepository.findAll().collectList().block());
         company.setId(count.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
@@ -692,8 +652,9 @@ class CompanyResourceIT {
         // Validate the Company in the database
         List<Company> companyList = companyRepository.findAll().collectList().block();
         assertThat(companyList).hasSize(databaseSizeBeforeUpdate);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(companySearchRepository.findAll().collectList().block());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
+
+        // Validate the Company in Elasticsearch
+        verify(mockCompanySearchRepository, times(0)).save(company);
     }
 
     @Test
@@ -791,7 +752,6 @@ class CompanyResourceIT {
     @Test
     void patchNonExistingCompany() throws Exception {
         int databaseSizeBeforeUpdate = companyRepository.findAll().collectList().block().size();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(companySearchRepository.findAll().collectList().block());
         company.setId(count.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
@@ -807,14 +767,14 @@ class CompanyResourceIT {
         // Validate the Company in the database
         List<Company> companyList = companyRepository.findAll().collectList().block();
         assertThat(companyList).hasSize(databaseSizeBeforeUpdate);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(companySearchRepository.findAll().collectList().block());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
+
+        // Validate the Company in Elasticsearch
+        verify(mockCompanySearchRepository, times(0)).save(company);
     }
 
     @Test
     void patchWithIdMismatchCompany() throws Exception {
         int databaseSizeBeforeUpdate = companyRepository.findAll().collectList().block().size();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(companySearchRepository.findAll().collectList().block());
         company.setId(count.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
@@ -830,14 +790,14 @@ class CompanyResourceIT {
         // Validate the Company in the database
         List<Company> companyList = companyRepository.findAll().collectList().block();
         assertThat(companyList).hasSize(databaseSizeBeforeUpdate);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(companySearchRepository.findAll().collectList().block());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
+
+        // Validate the Company in Elasticsearch
+        verify(mockCompanySearchRepository, times(0)).save(company);
     }
 
     @Test
     void patchWithMissingIdPathParamCompany() throws Exception {
         int databaseSizeBeforeUpdate = companyRepository.findAll().collectList().block().size();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(companySearchRepository.findAll().collectList().block());
         company.setId(count.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
@@ -853,20 +813,19 @@ class CompanyResourceIT {
         // Validate the Company in the database
         List<Company> companyList = companyRepository.findAll().collectList().block();
         assertThat(companyList).hasSize(databaseSizeBeforeUpdate);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(companySearchRepository.findAll().collectList().block());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
+
+        // Validate the Company in Elasticsearch
+        verify(mockCompanySearchRepository, times(0)).save(company);
     }
 
     @Test
     void deleteCompany() {
+        // Configure the mock search repository
+        when(mockCompanySearchRepository.deleteById(anyLong())).thenReturn(Mono.empty());
         // Initialize the database
         companyRepository.save(company).block();
-        companyRepository.save(company).block();
-        companySearchRepository.save(company).block();
 
         int databaseSizeBeforeDelete = companyRepository.findAll().collectList().block().size();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(companySearchRepository.findAll().collectList().block());
-        assertThat(searchDatabaseSizeBefore).isEqualTo(databaseSizeBeforeDelete);
 
         // Delete the company
         webTestClient
@@ -880,15 +839,18 @@ class CompanyResourceIT {
         // Validate the database contains one less item
         List<Company> companyList = companyRepository.findAll().collectList().block();
         assertThat(companyList).hasSize(databaseSizeBeforeDelete - 1);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(companySearchRepository.findAll().collectList().block());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore - 1);
+
+        // Validate the Company in Elasticsearch
+        verify(mockCompanySearchRepository, times(1)).deleteById(company.getId());
     }
 
     @Test
     void searchCompany() {
+        // Configure the mock search repository
+        when(mockCompanySearchRepository.save(any())).thenAnswer(invocation -> Mono.just(invocation.getArgument(0)));
         // Initialize the database
-        company = companyRepository.save(company).block();
-        companySearchRepository.save(company).block();
+        companyRepository.save(company).block();
+        when(mockCompanySearchRepository.search("id:" + company.getId())).thenReturn(Flux.just(company));
 
         // Search the company
         webTestClient

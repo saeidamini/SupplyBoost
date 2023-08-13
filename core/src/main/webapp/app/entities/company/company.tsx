@@ -1,25 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Input, InputGroup, FormGroup, Form, Row, Col, Table } from 'reactstrap';
 import { Translate, translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+import { searchEntities, getEntities } from './company.reducer';
+import { ICompany } from 'app/shared/model/company.model';
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-import { ICompany } from 'app/shared/model/company.model';
-import { searchEntities, getEntities } from './company.reducer';
-
-export const Company = () => {
+export const Company = (props: RouteComponentProps<{ url: string }>) => {
   const dispatch = useAppDispatch();
-
-  const location = useLocation();
-  const navigate = useNavigate();
 
   const [search, setSearch] = useState('');
 
-  const companyList = useAppSelector(state => state.core.company.entities);
-  const loading = useAppSelector(state => state.core.company.loading);
+  const companyList = useAppSelector(state => state.company.entities);
+  const loading = useAppSelector(state => state.company.loading);
 
   useEffect(() => {
     dispatch(getEntities({}));
@@ -43,6 +39,8 @@ export const Company = () => {
     dispatch(getEntities({}));
   };
 
+  const { match } = props;
+
   return (
     <div>
       <h2 id="company-heading" data-cy="CompanyHeading">
@@ -52,7 +50,7 @@ export const Company = () => {
             <FontAwesomeIcon icon="sync" spin={loading} />{' '}
             <Translate contentKey="coreApp.company.home.refreshListLabel">Refresh List</Translate>
           </Button>
-          <Link to="/company/new" className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
+          <Link to={`${match.url}/new`} className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
             <FontAwesomeIcon icon="plus" />
             &nbsp;
             <Translate contentKey="coreApp.company.home.createLabel">Create new Company</Translate>
@@ -127,7 +125,7 @@ export const Company = () => {
               {companyList.map((company, i) => (
                 <tr key={`entity-${i}`} data-cy="entityTable">
                   <td>
-                    <Button tag={Link} to={`/company/${company.id}`} color="link" size="sm">
+                    <Button tag={Link} to={`${match.url}/${company.id}`} color="link" size="sm">
                       {company.id}
                     </Button>
                   </td>
@@ -147,19 +145,19 @@ export const Company = () => {
                   </td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
-                      <Button tag={Link} to={`/company/${company.id}`} color="info" size="sm" data-cy="entityDetailsButton">
+                      <Button tag={Link} to={`${match.url}/${company.id}`} color="info" size="sm" data-cy="entityDetailsButton">
                         <FontAwesomeIcon icon="eye" />{' '}
                         <span className="d-none d-md-inline">
                           <Translate contentKey="entity.action.view">View</Translate>
                         </span>
                       </Button>
-                      <Button tag={Link} to={`/company/${company.id}/edit`} color="primary" size="sm" data-cy="entityEditButton">
+                      <Button tag={Link} to={`${match.url}/${company.id}/edit`} color="primary" size="sm" data-cy="entityEditButton">
                         <FontAwesomeIcon icon="pencil-alt" />{' '}
                         <span className="d-none d-md-inline">
                           <Translate contentKey="entity.action.edit">Edit</Translate>
                         </span>
                       </Button>
-                      <Button tag={Link} to={`/company/${company.id}/delete`} color="danger" size="sm" data-cy="entityDeleteButton">
+                      <Button tag={Link} to={`${match.url}/${company.id}/delete`} color="danger" size="sm" data-cy="entityDeleteButton">
                         <FontAwesomeIcon icon="trash" />{' '}
                         <span className="d-none d-md-inline">
                           <Translate contentKey="entity.action.delete">Delete</Translate>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { RouteComponentProps } from 'react-router-dom';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
 import { Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -7,25 +7,20 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 import { getEntity, deleteEntity } from './product-order.reducer';
 
-export const ProductOrderDeleteDialog = () => {
+export const ProductOrderDeleteDialog = (props: RouteComponentProps<{ id: string }>) => {
+  const [loadModal, setLoadModal] = useState(false);
   const dispatch = useAppDispatch();
 
-  const location = useLocation();
-  const navigate = useNavigate();
-  const { id } = useParams<'id'>();
-
-  const [loadModal, setLoadModal] = useState(false);
-
   useEffect(() => {
-    dispatch(getEntity(id));
+    dispatch(getEntity(props.match.params.id));
     setLoadModal(true);
   }, []);
 
-  const productOrderEntity = useAppSelector(state => state.core.productOrder.entity);
-  const updateSuccess = useAppSelector(state => state.core.productOrder.updateSuccess);
+  const productOrderEntity = useAppSelector(state => state.productOrder.entity);
+  const updateSuccess = useAppSelector(state => state.productOrder.updateSuccess);
 
   const handleClose = () => {
-    navigate('/product-order' + location.search);
+    props.history.push('/product-order' + props.location.search);
   };
 
   useEffect(() => {

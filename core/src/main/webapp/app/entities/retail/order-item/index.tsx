@@ -1,23 +1,23 @@
 import React from 'react';
-import { Route } from 'react-router-dom';
+import { Switch } from 'react-router-dom';
 
-import ErrorBoundaryRoutes from 'app/shared/error/error-boundary-routes';
+import ErrorBoundaryRoute from 'app/shared/error/error-boundary-route';
 
 import OrderItem from './order-item';
 import OrderItemDetail from './order-item-detail';
 import OrderItemUpdate from './order-item-update';
 import OrderItemDeleteDialog from './order-item-delete-dialog';
 
-const OrderItemRoutes = () => (
-  <ErrorBoundaryRoutes>
-    <Route index element={<OrderItem />} />
-    <Route path="new" element={<OrderItemUpdate />} />
-    <Route path=":id">
-      <Route index element={<OrderItemDetail />} />
-      <Route path="edit" element={<OrderItemUpdate />} />
-      <Route path="delete" element={<OrderItemDeleteDialog />} />
-    </Route>
-  </ErrorBoundaryRoutes>
+const Routes = ({ match }) => (
+  <>
+    <Switch>
+      <ErrorBoundaryRoute exact path={`${match.url}/new`} component={OrderItemUpdate} />
+      <ErrorBoundaryRoute exact path={`${match.url}/:id/edit`} component={OrderItemUpdate} />
+      <ErrorBoundaryRoute exact path={`${match.url}/:id`} component={OrderItemDetail} />
+      <ErrorBoundaryRoute path={match.url} component={OrderItem} />
+    </Switch>
+    <ErrorBoundaryRoute exact path={`${match.url}/:id/delete`} component={OrderItemDeleteDialog} />
+  </>
 );
 
-export default OrderItemRoutes;
+export default Routes;

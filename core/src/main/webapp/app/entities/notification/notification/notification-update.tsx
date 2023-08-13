@@ -1,40 +1,35 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Row, Col, FormText } from 'reactstrap';
 import { isNumber, Translate, translate, ValidatedField, ValidatedForm } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+import { getEntity, updateEntity, createEntity, reset } from './notification.reducer';
+import { INotification } from 'app/shared/model/notification/notification.model';
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
 import { mapIdList } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
-
-import { INotification } from 'app/shared/model/notification/notification.model';
 import { NotificationType } from 'app/shared/model/enumerations/notification-type.model';
-import { getEntity, updateEntity, createEntity, reset } from './notification.reducer';
 
-export const NotificationUpdate = () => {
+export const NotificationUpdate = (props: RouteComponentProps<{ id: string }>) => {
   const dispatch = useAppDispatch();
 
-  const navigate = useNavigate();
+  const [isNew] = useState(!props.match.params || !props.match.params.id);
 
-  const { id } = useParams<'id'>();
-  const isNew = id === undefined;
-
-  const notificationEntity = useAppSelector(state => state.core.notification.entity);
-  const loading = useAppSelector(state => state.core.notification.loading);
-  const updating = useAppSelector(state => state.core.notification.updating);
-  const updateSuccess = useAppSelector(state => state.core.notification.updateSuccess);
+  const notificationEntity = useAppSelector(state => state.notification.entity);
+  const loading = useAppSelector(state => state.notification.loading);
+  const updating = useAppSelector(state => state.notification.updating);
+  const updateSuccess = useAppSelector(state => state.notification.updateSuccess);
   const notificationTypeValues = Object.keys(NotificationType);
-
   const handleClose = () => {
-    navigate('/notification');
+    props.history.push('/notification');
   };
 
   useEffect(() => {
     if (isNew) {
       dispatch(reset());
     } else {
-      dispatch(getEntity(id));
+      dispatch(getEntity(props.match.params.id));
     }
   }, []);
 

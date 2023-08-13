@@ -10,7 +10,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
- * Spring Data R2DBC repository for the Company entity.
+ * Spring Data SQL reactive repository for the Company entity.
  */
 @SuppressWarnings("unused")
 @Repository
@@ -36,7 +36,6 @@ interface CompanyRepositoryInternal {
     Flux<Company> findAll();
 
     Mono<Company> findById(Long id);
-    // this is not supported at the moment because of https://github.com/jhipster/generator-jhipster/issues/18269
-    // Flux<Company> findAllBy(Pageable pageable, Criteria criteria);
 
+    Flux<Company> findAllBy(Pageable pageable, Criteria criteria);
 }

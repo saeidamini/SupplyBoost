@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { RouteComponentProps } from 'react-router-dom';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
 import { Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -7,25 +7,20 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 import { getEntity, deleteEntity } from './invoice.reducer';
 
-export const InvoiceDeleteDialog = () => {
+export const InvoiceDeleteDialog = (props: RouteComponentProps<{ id: string }>) => {
+  const [loadModal, setLoadModal] = useState(false);
   const dispatch = useAppDispatch();
 
-  const location = useLocation();
-  const navigate = useNavigate();
-  const { id } = useParams<'id'>();
-
-  const [loadModal, setLoadModal] = useState(false);
-
   useEffect(() => {
-    dispatch(getEntity(id));
+    dispatch(getEntity(props.match.params.id));
     setLoadModal(true);
   }, []);
 
-  const invoiceEntity = useAppSelector(state => state.core.invoice.entity);
-  const updateSuccess = useAppSelector(state => state.core.invoice.updateSuccess);
+  const invoiceEntity = useAppSelector(state => state.invoice.entity);
+  const updateSuccess = useAppSelector(state => state.invoice.updateSuccess);
 
   const handleClose = () => {
-    navigate('/invoice' + location.search);
+    props.history.push('/invoice' + props.location.search);
   };
 
   useEffect(() => {

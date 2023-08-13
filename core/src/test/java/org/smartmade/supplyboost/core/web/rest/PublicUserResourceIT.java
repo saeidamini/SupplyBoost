@@ -2,11 +2,13 @@ package org.smartmade.supplyboost.core.web.rest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.csrf;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.smartmade.supplyboost.core.IntegrationTest;
 import org.smartmade.supplyboost.core.config.Constants;
+import org.smartmade.supplyboost.core.config.TestSecurityConfiguration;
 import org.smartmade.supplyboost.core.domain.User;
 import org.smartmade.supplyboost.core.repository.EntityManager;
 import org.smartmade.supplyboost.core.repository.UserRepository;
@@ -50,6 +52,11 @@ class PublicUserResourceIT {
     private User user;
 
     @BeforeEach
+    public void setupCsrf() {
+        webTestClient = webTestClient.mutateWith(csrf());
+    }
+
+    @BeforeEach
     public void initTest() {
         user = UserResourceIT.initTestUser(userRepository, em);
     }
@@ -57,12 +64,12 @@ class PublicUserResourceIT {
     @Test
     void getAllPublicUsers() {
         // Initialize the database
-        userRepository.save(user).block();
+        userRepository.create(user).block();
 
         // Get all the users
         UserDTO foundUser = webTestClient
             .get()
-            .uri("/api/users?sort=id,desc")
+            .uri("/api/users?sort=id,DESC")
             .accept(MediaType.APPLICATION_JSON)
             .exchange()
             .expectStatus()
@@ -94,34 +101,5 @@ class PublicUserResourceIT {
             .hasJsonPath()
             .jsonPath("$[?(@=='" + AuthoritiesConstants.USER + "')]")
             .hasJsonPath();
-    }
-
-    @Test
-    void getAllUsersSortedByParameters() throws Exception {
-        // Initialize the database
-        userRepository.save(user).block();
-
-        webTestClient
-            .get()
-            .uri("/api/users?sort=resetKey,desc")
-            .accept(MediaType.APPLICATION_JSON)
-            .exchange()
-            .expectStatus()
-            .isBadRequest();
-        webTestClient
-            .get()
-            .uri("/api/users?sort=password,desc")
-            .accept(MediaType.APPLICATION_JSON)
-            .exchange()
-            .expectStatus()
-            .isBadRequest();
-        webTestClient
-            .get()
-            .uri("/api/users?sort=resetKey,desc&sort=id,desc")
-            .accept(MediaType.APPLICATION_JSON)
-            .exchange()
-            .expectStatus()
-            .isBadRequest();
-        webTestClient.get().uri("/api/users?sort=id,desc").accept(MediaType.APPLICATION_JSON).exchange().expectStatus().isOk();
     }
 }

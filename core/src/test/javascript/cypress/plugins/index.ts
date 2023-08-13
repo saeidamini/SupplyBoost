@@ -10,11 +10,14 @@
 
 // This function is called when a project is opened or re-opened (e.g. due to
 // the project's config changing)
-import { existsSync, mkdirSync, writeFileSync } from 'fs';
+import fs = require('fs');
 import { lighthouse, pa11y, prepareAudit } from 'cypress-audit';
-import ReportGenerator from 'lighthouse/report/generator/report-generator';
-
-export default async (on: Cypress.PluginEvents, config: Cypress.PluginConfigOptions) => {
+import ReportGenerator = require('lighthouse/report/generator/report-generator');
+/**
+ * @type {Cypress.PluginConfig}
+ */
+module.exports = async on => {
+  // `on` is used to hook into various events Cypress emits
   on('before:browser:launch', (browser, launchOptions) => {
     prepareAudit(launchOptions);
     if (browser.name === 'chrome' && browser.isHeadless) {
@@ -25,10 +28,9 @@ export default async (on: Cypress.PluginEvents, config: Cypress.PluginConfigOpti
 
   on('task', {
     lighthouse: lighthouse(lighthouseReport => {
-      !existsSync('target/cypress') && mkdirSync('target/cypress', { recursive: true });
-      writeFileSync('target/cypress/lhreport.html', ReportGenerator.generateReport(lighthouseReport.lhr, 'html'));
+      !fs.existsSync('target/cypress') && fs.mkdirSync('target/cypress', { recursive: true });
+      fs.writeFileSync('target/cypress/lhreport.html', ReportGenerator.generateReport(lighthouseReport.lhr, 'html'));
     }),
     pa11y: pa11y(),
   });
-  return config;
 };

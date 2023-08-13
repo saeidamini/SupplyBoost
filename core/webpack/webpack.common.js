@@ -89,6 +89,17 @@ module.exports = async options => {
       stats: {
         children: false,
       },
+      optimization: {
+        splitChunks: {
+          cacheGroups: {
+            commons: {
+              test: /[\\/]node_modules[\\/]/,
+              name: 'vendors',
+              chunks: 'all',
+            },
+          },
+        },
+      },
       plugins: [
         new webpack.EnvironmentPlugin({
           // react-jhipster requires LOG_LEVEL config.
@@ -101,26 +112,18 @@ module.exports = async options => {
           SERVER_API_URL: JSON.stringify(environment.SERVER_API_URL),
         }),
         new ESLintPlugin({
-          baseConfig: {
-            parserOptions: {
-              project: ['../tsconfig.json'],
-            },
-          },
+          extensions: ['js', 'ts', 'jsx', 'tsx'],
         }),
         new ForkTsCheckerWebpackPlugin(),
         new CopyWebpackPlugin({
           patterns: [
             {
-              // https://github.com/swagger-api/swagger-ui/blob/v4.6.1/swagger-ui-dist-package/README.md
-              context: require('swagger-ui-dist').getAbsoluteFSPath(),
+              context: './node_modules/swagger-ui-dist/',
               from: '*.{js,css,html,png}',
               to: 'swagger-ui/',
               globOptions: { ignore: ['**/index.html'] },
             },
-            {
-              from: require.resolve('axios/dist/axios.min.js'),
-              to: 'swagger-ui/',
-            },
+            { from: './node_modules/axios/dist/axios.min.js', to: 'swagger-ui/' },
             { from: './src/main/webapp/swagger-ui/', to: 'swagger-ui/' },
             { from: './src/main/webapp/content/', to: 'content/' },
             { from: './src/main/webapp/favicon.ico', to: 'favicon.ico' },

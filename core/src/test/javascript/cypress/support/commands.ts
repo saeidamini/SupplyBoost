@@ -28,39 +28,6 @@ export const loginItemSelector = '[data-cy="login"]';
 export const logoutItemSelector = '[data-cy="logout"]';
 export const entityItemSelector = '[data-cy="entity"]';
 
-// Login
-export const titleLoginSelector = '[data-cy="loginTitle"]';
-export const errorLoginSelector = '[data-cy="loginError"]';
-export const usernameLoginSelector = '[data-cy="username"]';
-export const passwordLoginSelector = '[data-cy="password"]';
-export const forgetYourPasswordSelector = '[data-cy="forgetYourPasswordSelector"]';
-export const submitLoginSelector = '[data-cy="submit"]';
-
-// Register
-export const titleRegisterSelector = '[data-cy="registerTitle"]';
-export const usernameRegisterSelector = '[data-cy="username"]';
-export const emailRegisterSelector = '[data-cy="email"]';
-export const firstPasswordRegisterSelector = '[data-cy="firstPassword"]';
-export const secondPasswordRegisterSelector = '[data-cy="secondPassword"]';
-export const submitRegisterSelector = '[data-cy="submit"]';
-
-// Settings
-export const firstNameSettingsSelector = '[data-cy="firstname"]';
-export const lastNameSettingsSelector = '[data-cy="lastname"]';
-export const emailSettingsSelector = '[data-cy="email"]';
-export const languageSettingsSelector = '[data-cy="langKey"]';
-export const submitSettingsSelector = '[data-cy="submit"]';
-
-// Password
-export const currentPasswordSelector = '[data-cy="currentPassword"]';
-export const newPasswordSelector = '[data-cy="newPassword"]';
-export const confirmPasswordSelector = '[data-cy="confirmPassword"]';
-export const submitPasswordSelector = '[data-cy="submit"]';
-
-// Reset Password
-export const emailResetPasswordSelector = '[data-cy="emailResetPassword"]';
-export const submitInitResetPasswordSelector = '[data-cy="submit"]';
-
 // Administration
 export const userManagementPageHeadingSelector = '[data-cy="userManagementPageHeading"]';
 export const swaggerFrameSelector = 'iframe[data-cy="swagger-frame"]';
@@ -78,13 +45,15 @@ export const classInvalid = 'is-invalid';
 
 export const classValid = 'is-valid';
 
-Cypress.Commands.add('authenticatedRequest', data => {
-  const bearerToken = JSON.parse(sessionStorage.getItem(Cypress.env('jwtStorageName')));
-  return cy.request({
-    ...data,
-    auth: {
-      bearer: bearerToken,
-    },
+Cypress.Commands.add('authenticatedRequest', (data: any) => {
+  return cy.getCookie('XSRF-TOKEN').then(csrfCookie => {
+    return cy.request({
+      ...data,
+      headers: {
+        ...data.headers,
+        'X-XSRF-TOKEN': csrfCookie?.value,
+      },
+    });
   });
 });
 
@@ -92,17 +61,9 @@ Cypress.Commands.add('login', (username: string, password: string) => {
   cy.session(
     [username, password],
     () => {
-      cy.request({
-        method: 'GET',
-        url: '/api/account',
-        failOnStatusCode: false,
-      });
-      cy.authenticatedRequest({
-        method: 'POST',
-        body: { username, password },
-        url: Cypress.env('authenticationUrl'),
-      }).then(({ body: { id_token } }) => {
-        sessionStorage.setItem(Cypress.env('jwtStorageName'), JSON.stringify(id_token));
+      cy.getOauth2Data();
+      cy.get('@oauth2Data').then(oauth2Data => {
+        cy.oauthLogin(oauth2Data, username, password);
       });
     },
     {
@@ -116,8 +77,7 @@ Cypress.Commands.add('login', (username: string, password: string) => {
 declare global {
   namespace Cypress {
     interface Chainable {
-      authenticatedRequest(data): Cypress.Chainable;
-      login(username: string, password: string): Cypress.Chainable;
+      authenticatedRequest(data: any): Cypress.Chainable;
     }
   }
 }

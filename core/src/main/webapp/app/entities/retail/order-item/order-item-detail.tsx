@@ -1,24 +1,21 @@
 import React, { useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Row, Col } from 'reactstrap';
 import { Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+import { getEntity } from './order-item.reducer';
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-import { getEntity } from './order-item.reducer';
-
-export const OrderItemDetail = () => {
+export const OrderItemDetail = (props: RouteComponentProps<{ id: string }>) => {
   const dispatch = useAppDispatch();
 
-  const { id } = useParams<'id'>();
-
   useEffect(() => {
-    dispatch(getEntity(id));
+    dispatch(getEntity(props.match.params.id));
   }, []);
 
-  const orderItemEntity = useAppSelector(state => state.core.orderItem.entity);
+  const orderItemEntity = useAppSelector(state => state.orderItem.entity);
   return (
     <Row>
       <Col md="8">

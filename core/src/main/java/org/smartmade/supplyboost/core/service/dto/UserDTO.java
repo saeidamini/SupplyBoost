@@ -1,16 +1,13 @@
 package org.smartmade.supplyboost.core.service.dto;
 
-import java.io.Serializable;
 import org.smartmade.supplyboost.core.domain.User;
 
 /**
  * A DTO representing a user, with only the public attributes.
  */
-public class UserDTO implements Serializable {
+public class UserDTO {
 
-    private static final long serialVersionUID = 1L;
-
-    private Long id;
+    private String id;
 
     private String login;
 
@@ -24,11 +21,11 @@ public class UserDTO implements Serializable {
         this.login = user.getLogin();
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

@@ -19,7 +19,7 @@
       "status": "Status",
       "code": "Code",
       "invoiceId": "Invoice Id",
-      "customer": "Customer",
+      "customerName": "Customer Name",
       "orderItem": "Order Item",
       "customer": "Customer"
     }

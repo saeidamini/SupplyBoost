@@ -1,5 +1,8 @@
 package org.smartmade.supplyboost.core.web.rest.errors;
 
+import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.csrf;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.smartmade.supplyboost.core.IntegrationTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +23,11 @@ class ExceptionTranslatorIT {
 
     @Autowired
     private WebTestClient webTestClient;
+
+    @BeforeEach
+    public void setupCsrf() {
+        webTestClient = webTestClient.mutateWith(csrf());
+    }
 
     @Test
     void testConcurrencyFailure() {

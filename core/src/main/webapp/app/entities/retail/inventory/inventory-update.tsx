@@ -1,41 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Row, Col, FormText } from 'reactstrap';
 import { isNumber, Translate, translate, ValidatedField, ValidatedForm } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+import { IProduct } from 'app/shared/model/retail/product.model';
+import { getEntities as getProducts } from 'app/entities/retail/product/product.reducer';
+import { getEntity, updateEntity, createEntity, reset } from './inventory.reducer';
+import { IInventory } from 'app/shared/model/retail/inventory.model';
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
 import { mapIdList } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-import { IProduct } from 'app/shared/model/retail/product.model';
-import { getEntities as getProducts } from 'app/entities/retail/product/product.reducer';
-import { IInventory } from 'app/shared/model/retail/inventory.model';
-import { getEntity, updateEntity, createEntity, reset } from './inventory.reducer';
-
-export const InventoryUpdate = () => {
+export const InventoryUpdate = (props: RouteComponentProps<{ id: string }>) => {
   const dispatch = useAppDispatch();
 
-  const navigate = useNavigate();
+  const [isNew] = useState(!props.match.params || !props.match.params.id);
 
-  const { id } = useParams<'id'>();
-  const isNew = id === undefined;
-
-  const products = useAppSelector(state => state.core.product.entities);
-  const inventoryEntity = useAppSelector(state => state.core.inventory.entity);
-  const loading = useAppSelector(state => state.core.inventory.loading);
-  const updating = useAppSelector(state => state.core.inventory.updating);
-  const updateSuccess = useAppSelector(state => state.core.inventory.updateSuccess);
-
+  const products = useAppSelector(state => state.product.entities);
+  const inventoryEntity = useAppSelector(state => state.inventory.entity);
+  const loading = useAppSelector(state => state.inventory.loading);
+  const updating = useAppSelector(state => state.inventory.updating);
+  const updateSuccess = useAppSelector(state => state.inventory.updateSuccess);
   const handleClose = () => {
-    navigate('/inventory');
+    props.history.push('/inventory');
   };
 
   useEffect(() => {
     if (isNew) {
       dispatch(reset());
     } else {
-      dispatch(getEntity(id));
+      dispatch(getEntity(props.match.params.id));
     }
 
     dispatch(getProducts({}));

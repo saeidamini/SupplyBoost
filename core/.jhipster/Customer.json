@@ -1,6 +1,6 @@
 {
   "applications": ["core", "retail"],
-  "changelogDate": "20221017075225",
+  "changelogDate": "20221017095537",
   "clientRootFolder": "retail",
   "databaseType": "sql",
   "dto": "no",
@@ -64,6 +64,7 @@
     {
       "otherEntityField": "login",
       "otherEntityName": "user",
+      "otherEntityRelationshipName": "customer",
       "ownerSide": true,
       "relationshipName": "user",
       "relationshipType": "one-to-one",

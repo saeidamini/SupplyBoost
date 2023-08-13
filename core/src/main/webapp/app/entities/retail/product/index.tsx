@@ -1,23 +1,23 @@
 import React from 'react';
-import { Route } from 'react-router-dom';
+import { Switch } from 'react-router-dom';
 
-import ErrorBoundaryRoutes from 'app/shared/error/error-boundary-routes';
+import ErrorBoundaryRoute from 'app/shared/error/error-boundary-route';
 
 import Product from './product';
 import ProductDetail from './product-detail';
 import ProductUpdate from './product-update';
 import ProductDeleteDialog from './product-delete-dialog';
 
-const ProductRoutes = () => (
-  <ErrorBoundaryRoutes>
-    <Route index element={<Product />} />
-    <Route path="new" element={<ProductUpdate />} />
-    <Route path=":id">
-      <Route index element={<ProductDetail />} />
-      <Route path="edit" element={<ProductUpdate />} />
-      <Route path="delete" element={<ProductDeleteDialog />} />
-    </Route>
-  </ErrorBoundaryRoutes>
+const Routes = ({ match }) => (
+  <>
+    <Switch>
+      <ErrorBoundaryRoute exact path={`${match.url}/new`} component={ProductUpdate} />
+      <ErrorBoundaryRoute exact path={`${match.url}/:id/edit`} component={ProductUpdate} />
+      <ErrorBoundaryRoute exact path={`${match.url}/:id`} component={ProductDetail} />
+      <ErrorBoundaryRoute path={match.url} component={Product} />
+    </Switch>
+    <ErrorBoundaryRoute exact path={`${match.url}/:id/delete`} component={ProductDeleteDialog} />
+  </>
 );
 
-export default ProductRoutes;
+export default Routes;

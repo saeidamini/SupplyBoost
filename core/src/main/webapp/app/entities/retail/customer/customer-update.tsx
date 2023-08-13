@@ -1,43 +1,38 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Row, Col, FormText } from 'reactstrap';
 import { isNumber, Translate, translate, ValidatedField, ValidatedForm } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+import { IUser } from 'app/shared/model/user.model';
+import { getUsers } from 'app/shared/reducers/user-management';
+import { getEntity, updateEntity, createEntity, reset } from './customer.reducer';
+import { ICustomer } from 'app/shared/model/retail/customer.model';
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
 import { mapIdList } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
-
-import { IUser } from 'app/shared/model/user.model';
-import { getUsers } from 'app/modules/administration/user-management/user-management.reducer';
-import { ICustomer } from 'app/shared/model/retail/customer.model';
 import { Gender } from 'app/shared/model/enumerations/gender.model';
-import { getEntity, updateEntity, createEntity, reset } from './customer.reducer';
 
-export const CustomerUpdate = () => {
+export const CustomerUpdate = (props: RouteComponentProps<{ id: string }>) => {
   const dispatch = useAppDispatch();
 
-  const navigate = useNavigate();
-
-  const { id } = useParams<'id'>();
-  const isNew = id === undefined;
+  const [isNew] = useState(!props.match.params || !props.match.params.id);
 
   const users = useAppSelector(state => state.userManagement.users);
-  const customerEntity = useAppSelector(state => state.core.customer.entity);
-  const loading = useAppSelector(state => state.core.customer.loading);
-  const updating = useAppSelector(state => state.core.customer.updating);
-  const updateSuccess = useAppSelector(state => state.core.customer.updateSuccess);
+  const customerEntity = useAppSelector(state => state.customer.entity);
+  const loading = useAppSelector(state => state.customer.loading);
+  const updating = useAppSelector(state => state.customer.updating);
+  const updateSuccess = useAppSelector(state => state.customer.updateSuccess);
   const genderValues = Object.keys(Gender);
-
   const handleClose = () => {
-    navigate('/customer' + location.search);
+    props.history.push('/customer' + props.location.search);
   };
 
   useEffect(() => {
     if (isNew) {
       dispatch(reset());
     } else {
-      dispatch(getEntity(id));
+      dispatch(getEntity(props.match.params.id));
     }
 
     dispatch(getUsers({}));

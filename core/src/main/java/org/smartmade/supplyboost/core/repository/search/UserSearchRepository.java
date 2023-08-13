@@ -12,7 +12,7 @@ import reactor.core.publisher.Flux;
 /**
  * Spring Data Elasticsearch repository for the User entity.
  */
-public interface UserSearchRepository extends ReactiveElasticsearchRepository<User, Long>, UserSearchRepositoryInternal {}
+public interface UserSearchRepository extends ReactiveElasticsearchRepository<User, String>, UserSearchRepositoryInternal {}
 
 interface UserSearchRepositoryInternal {
     Flux<User> search(String query);

@@ -1,6 +1,6 @@
 {
   "applications": ["core", "retail"],
-  "changelogDate": "20221017075325",
+  "changelogDate": "20221017095637",
   "clientRootFolder": "retail",
   "databaseType": "sql",
   "dto": "no",
@@ -36,6 +36,7 @@
     {
       "otherEntityField": "name",
       "otherEntityName": "product",
+      "otherEntityRelationshipName": "orderItem",
       "relationshipName": "product",
       "relationshipType": "many-to-one",
       "relationshipValidateRules": "required"

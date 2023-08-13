@@ -3,7 +3,7 @@
     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
     xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd
                         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
 
@@ -13,13 +13,12 @@
     -->
     <changeSet id="00000000000001" author="jhipster">
         <createTable tableName="scm_user">
-            <column name="id" type="bigint" autoIncrement="true" startWith="1050">
+            <column name="id" type="varchar(100)">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="login" type="varchar(50)">
                 <constraints unique="true" nullable="false" uniqueConstraintName="ux_user_login"/>
             </column>
-            <column name="password_hash" type="varchar(60)"/>
             <column name="first_name" type="varchar(50)"/>
             <column name="last_name" type="varchar(50)"/>
             <column name="email" type="varchar(191)">
@@ -30,15 +29,10 @@
                 <constraints nullable="false" />
             </column>
             <column name="lang_key" type="varchar(10)"/>
-            <column name="activation_key" type="varchar(20)"/>
-            <column name="reset_key" type="varchar(20)"/>
             <column name="created_by" type="varchar(50)">
                 <constraints nullable="false"/>
             </column>
             <column name="created_date" type="timestamp"/>
-            <column name="reset_date" type="timestamp">
-                <constraints nullable="true"/>
-            </column>
             <column name="last_modified_by" type="varchar(50)"/>
             <column name="last_modified_date" type="timestamp"/>
         </createTable>
@@ -50,7 +44,7 @@
         </createTable>
 
         <createTable tableName="scm_user_authority">
-            <column name="user_id" type="bigint">
+            <column name="user_id" type="varchar(100)">
                 <constraints nullable="false"/>
             </column>
             <column name="authority_name" type="varchar(50)">
@@ -72,15 +66,12 @@
                                  referencedColumnNames="id"
                                  referencedTableName="scm_user"/>
 
-        <addNotNullConstraint   columnName="password_hash"
-                                columnDataType="varchar(60)"
-                                tableName="scm_user"/>
         <loadData
                   file="config/liquibase/data/user.csv"
                   separator=";"
                   tableName="scm_user"
                   usePreparedStatements="true">
-            <column name="id" type="numeric"/>
+            <column name="id" type="string"/>
             <column name="activated" type="boolean"/>
             <column name="created_date" type="timestamp"/>
         </loadData>
@@ -97,7 +88,7 @@
                   separator=";"
                   tableName="scm_user_authority"
                   usePreparedStatements="true">
-            <column name="user_id" type="numeric"/>
+            <column name="user_id" type="string"/>
         </loadData>
     </changeSet>
 

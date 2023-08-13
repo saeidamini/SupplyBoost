@@ -1,43 +1,38 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Row, Col, FormText } from 'reactstrap';
 import { isNumber, Translate, translate, ValidatedField, ValidatedForm, ValidatedBlobField } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+import { IProductCategory } from 'app/shared/model/retail/product-category.model';
+import { getEntities as getProductCategories } from 'app/entities/retail/product-category/product-category.reducer';
+import { getEntity, updateEntity, createEntity, reset } from './product.reducer';
+import { IProduct } from 'app/shared/model/retail/product.model';
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
 import { mapIdList } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
-
-import { IProductCategory } from 'app/shared/model/retail/product-category.model';
-import { getEntities as getProductCategories } from 'app/entities/retail/product-category/product-category.reducer';
-import { IProduct } from 'app/shared/model/retail/product.model';
 import { Size } from 'app/shared/model/enumerations/size.model';
-import { getEntity, updateEntity, createEntity, reset } from './product.reducer';
 
-export const ProductUpdate = () => {
+export const ProductUpdate = (props: RouteComponentProps<{ id: string }>) => {
   const dispatch = useAppDispatch();
 
-  const navigate = useNavigate();
+  const [isNew] = useState(!props.match.params || !props.match.params.id);
 
-  const { id } = useParams<'id'>();
-  const isNew = id === undefined;
-
-  const productCategories = useAppSelector(state => state.core.productCategory.entities);
-  const productEntity = useAppSelector(state => state.core.product.entity);
-  const loading = useAppSelector(state => state.core.product.loading);
-  const updating = useAppSelector(state => state.core.product.updating);
-  const updateSuccess = useAppSelector(state => state.core.product.updateSuccess);
+  const productCategories = useAppSelector(state => state.productCategory.entities);
+  const productEntity = useAppSelector(state => state.product.entity);
+  const loading = useAppSelector(state => state.product.loading);
+  const updating = useAppSelector(state => state.product.updating);
+  const updateSuccess = useAppSelector(state => state.product.updateSuccess);
   const sizeValues = Object.keys(Size);
-
   const handleClose = () => {
-    navigate('/product' + location.search);
+    props.history.push('/product' + props.location.search);
   };
 
   useEffect(() => {
     if (isNew) {
       dispatch(reset());
     } else {
-      dispatch(getEntity(id));
+      dispatch(getEntity(props.match.params.id));
     }
 
     dispatch(getProductCategories({}));

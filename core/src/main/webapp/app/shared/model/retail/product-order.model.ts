@@ -9,7 +9,7 @@ export interface IProductOrder {
   status?: OrderStatus;
   code?: string;
   invoiceId?: number | null;
-  customer?: string;
+  customerName?: string;
   orderItems?: IOrderItem[] | null;
   customer?: ICustomer;
 }

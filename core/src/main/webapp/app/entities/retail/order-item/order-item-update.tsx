@@ -1,46 +1,41 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Row, Col, FormText } from 'reactstrap';
 import { isNumber, Translate, translate, ValidatedField, ValidatedForm } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
-import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
-import { mapIdList } from 'app/shared/util/entity-utils';
-import { useAppDispatch, useAppSelector } from 'app/config/store';
 
 import { IProduct } from 'app/shared/model/retail/product.model';
 import { getEntities as getProducts } from 'app/entities/retail/product/product.reducer';
 import { IProductOrder } from 'app/shared/model/retail/product-order.model';
 import { getEntities as getProductOrders } from 'app/entities/retail/product-order/product-order.reducer';
-import { IOrderItem } from 'app/shared/model/retail/order-item.model';
-import { OrderItemStatus } from 'app/shared/model/enumerations/order-item-status.model';
 import { getEntity, updateEntity, createEntity, reset } from './order-item.reducer';
+import { IOrderItem } from 'app/shared/model/retail/order-item.model';
+import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
+import { mapIdList } from 'app/shared/util/entity-utils';
+import { useAppDispatch, useAppSelector } from 'app/config/store';
+import { OrderItemStatus } from 'app/shared/model/enumerations/order-item-status.model';
 
-export const OrderItemUpdate = () => {
+export const OrderItemUpdate = (props: RouteComponentProps<{ id: string }>) => {
   const dispatch = useAppDispatch();
 
-  const navigate = useNavigate();
+  const [isNew] = useState(!props.match.params || !props.match.params.id);
 
-  const { id } = useParams<'id'>();
-  const isNew = id === undefined;
-
-  const products = useAppSelector(state => state.core.product.entities);
-  const productOrders = useAppSelector(state => state.core.productOrder.entities);
-  const orderItemEntity = useAppSelector(state => state.core.orderItem.entity);
-  const loading = useAppSelector(state => state.core.orderItem.loading);
-  const updating = useAppSelector(state => state.core.orderItem.updating);
-  const updateSuccess = useAppSelector(state => state.core.orderItem.updateSuccess);
+  const products = useAppSelector(state => state.product.entities);
+  const productOrders = useAppSelector(state => state.productOrder.entities);
+  const orderItemEntity = useAppSelector(state => state.orderItem.entity);
+  const loading = useAppSelector(state => state.orderItem.loading);
+  const updating = useAppSelector(state => state.orderItem.updating);
+  const updateSuccess = useAppSelector(state => state.orderItem.updateSuccess);
   const orderItemStatusValues = Object.keys(OrderItemStatus);
-
   const handleClose = () => {
-    navigate('/order-item' + location.search);
+    props.history.push('/order-item' + props.location.search);
   };
 
   useEffect(() => {
     if (isNew) {
       dispatch(reset());
     } else {
-      dispatch(getEntity(id));
+      dispatch(getEntity(props.match.params.id));
     }
 
     dispatch(getProducts({}));

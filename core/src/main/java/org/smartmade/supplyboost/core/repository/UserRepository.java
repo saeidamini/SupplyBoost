@@ -3,7 +3,6 @@ package org.smartmade.supplyboost.core.repository;
 import static org.springframework.data.relational.core.query.Criteria.where;
 import static org.springframework.data.relational.core.query.Query.query;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -31,15 +30,7 @@ import reactor.util.function.Tuples;
  * Spring Data R2DBC repository for the {@link User} entity.
  */
 @Repository
-public interface UserRepository extends R2dbcRepository<User, Long>, UserRepositoryInternal {
-    Mono<User> findOneByActivationKey(String activationKey);
-
-    Flux<User> findAllByActivatedIsFalseAndActivationKeyIsNotNullAndCreatedDateBefore(LocalDateTime dateTime);
-
-    Mono<User> findOneByResetKey(String resetKey);
-
-    Mono<User> findOneByEmailIgnoreCase(String email);
-
+public interface UserRepository extends R2dbcRepository<User, String>, UserRepositoryInternal {
     Mono<User> findOneByLogin(String login);
 
     Flux<User> findAllByIdNotNull(Pageable pageable);
@@ -49,7 +40,7 @@ public interface UserRepository extends R2dbcRepository<User, Long>, UserReposit
     Mono<Long> count();
 
     @Query("INSERT INTO scm_user_authority VALUES(:userId, :authority)")
-    Mono<Void> saveUserAuthority(Long userId, String authority);
+    Mono<Void> saveUserAuthority(String userId, String authority);
 
     @Query("DELETE FROM scm_user_authority")
     Mono<Void> deleteAllUserAuthorities();
@@ -58,14 +49,10 @@ public interface UserRepository extends R2dbcRepository<User, Long>, UserReposit
     Mono<Void> deleteUserAuthorities(Long userId);
 }
 
-interface DeleteExtended<T> {
-    Mono<Void> delete(T user);
-}
-
-interface UserRepositoryInternal extends DeleteExtended<User> {
+interface UserRepositoryInternal {
     Mono<User> findOneWithAuthoritiesByLogin(String login);
 
-    Mono<User> findOneWithAuthoritiesByEmailIgnoreCase(String email);
+    Mono<User> create(User user);
 
     Flux<User> findAllWithAuthorities(Pageable pageable);
 }
@@ -85,11 +72,6 @@ class UserRepositoryInternalImpl implements UserRepositoryInternal {
     @Override
     public Mono<User> findOneWithAuthoritiesByLogin(String login) {
         return findOneWithAuthoritiesBy("login", login);
-    }
-
-    @Override
-    public Mono<User> findOneWithAuthoritiesByEmailIgnoreCase(String email) {
-        return findOneWithAuthoritiesBy("email", email.toLowerCase());
     }
 
     @Override
@@ -119,12 +101,8 @@ class UserRepositoryInternalImpl implements UserRepositoryInternal {
     }
 
     @Override
-    public Mono<Void> delete(User user) {
-        return db
-            .sql("DELETE FROM scm_user_authority WHERE user_id = :userId")
-            .bind("userId", user.getId())
-            .then()
-            .then(r2dbcEntityTemplate.delete(User.class).matching(query(where("id").is(user.getId()))).all().then());
+    public Mono<User> create(User user) {
+        return r2dbcEntityTemplate.insert(User.class).using(user).defaultIfEmpty(user);
     }
 
     private Mono<User> findOneWithAuthoritiesBy(String fieldName, Object fieldValue) {

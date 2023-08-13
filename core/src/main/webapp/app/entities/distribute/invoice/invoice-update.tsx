@@ -1,42 +1,37 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Row, Col, FormText } from 'reactstrap';
 import { isNumber, Translate, translate, ValidatedField, ValidatedForm } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+import { getEntity, updateEntity, createEntity, reset } from './invoice.reducer';
+import { IInvoice } from 'app/shared/model/distribute/invoice.model';
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
 import { mapIdList } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
-
-import { IInvoice } from 'app/shared/model/distribute/invoice.model';
 import { InvoiceStatus } from 'app/shared/model/enumerations/invoice-status.model';
 import { PaymentMethod } from 'app/shared/model/enumerations/payment-method.model';
-import { getEntity, updateEntity, createEntity, reset } from './invoice.reducer';
 
-export const InvoiceUpdate = () => {
+export const InvoiceUpdate = (props: RouteComponentProps<{ id: string }>) => {
   const dispatch = useAppDispatch();
 
-  const navigate = useNavigate();
+  const [isNew] = useState(!props.match.params || !props.match.params.id);
 
-  const { id } = useParams<'id'>();
-  const isNew = id === undefined;
-
-  const invoiceEntity = useAppSelector(state => state.core.invoice.entity);
-  const loading = useAppSelector(state => state.core.invoice.loading);
-  const updating = useAppSelector(state => state.core.invoice.updating);
-  const updateSuccess = useAppSelector(state => state.core.invoice.updateSuccess);
+  const invoiceEntity = useAppSelector(state => state.invoice.entity);
+  const loading = useAppSelector(state => state.invoice.loading);
+  const updating = useAppSelector(state => state.invoice.updating);
+  const updateSuccess = useAppSelector(state => state.invoice.updateSuccess);
   const invoiceStatusValues = Object.keys(InvoiceStatus);
   const paymentMethodValues = Object.keys(PaymentMethod);
-
   const handleClose = () => {
-    navigate('/invoice' + location.search);
+    props.history.push('/invoice' + props.location.search);
   };
 
   useEffect(() => {
     if (isNew) {
       dispatch(reset());
     } else {
-      dispatch(getEntity(id));
+      dispatch(getEntity(props.match.params.id));
     }
   }, []);
 

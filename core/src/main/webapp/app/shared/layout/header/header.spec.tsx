@@ -1,7 +1,8 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
-import { MemoryRouter } from 'react-router-dom';
+import { Router } from 'react-router-dom';
+import { createMemoryHistory } from 'history';
 
 import initStore from 'app/config/store';
 import Header from './header';
@@ -35,11 +36,12 @@ describe('Header', () => {
   const wrapper = (props = devProps) => {
     if (!mountedWrapper) {
       const store = initStore();
+      const history = createMemoryHistory();
       const { container } = render(
         <Provider store={store}>
-          <MemoryRouter>
+          <Router history={history}>
             <Header {...props} />
-          </MemoryRouter>
+          </Router>
         </Provider>
       );
       mountedWrapper = container.innerHTML;

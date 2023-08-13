@@ -1,6 +1,6 @@
 {
   "applications": ["core", "distribute"],
-  "changelogDate": "20221017074925",
+  "changelogDate": "20221017095237",
   "clientRootFolder": "distribute",
   "databaseType": "sql",
   "dto": "no",

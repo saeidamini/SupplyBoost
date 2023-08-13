@@ -1,42 +1,37 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Row, Col, FormText } from 'reactstrap';
 import { isNumber, Translate, translate, ValidatedField, ValidatedForm } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+import { getEntity, updateEntity, createEntity, reset } from './company.reducer';
+import { ICompany } from 'app/shared/model/company.model';
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
 import { mapIdList } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
-
-import { ICompany } from 'app/shared/model/company.model';
 import { Gender } from 'app/shared/model/enumerations/gender.model';
 import { CompanyType } from 'app/shared/model/enumerations/company-type.model';
-import { getEntity, updateEntity, createEntity, reset } from './company.reducer';
 
-export const CompanyUpdate = () => {
+export const CompanyUpdate = (props: RouteComponentProps<{ id: string }>) => {
   const dispatch = useAppDispatch();
 
-  const navigate = useNavigate();
+  const [isNew] = useState(!props.match.params || !props.match.params.id);
 
-  const { id } = useParams<'id'>();
-  const isNew = id === undefined;
-
-  const companyEntity = useAppSelector(state => state.core.company.entity);
-  const loading = useAppSelector(state => state.core.company.loading);
-  const updating = useAppSelector(state => state.core.company.updating);
-  const updateSuccess = useAppSelector(state => state.core.company.updateSuccess);
+  const companyEntity = useAppSelector(state => state.company.entity);
+  const loading = useAppSelector(state => state.company.loading);
+  const updating = useAppSelector(state => state.company.updating);
+  const updateSuccess = useAppSelector(state => state.company.updateSuccess);
   const genderValues = Object.keys(Gender);
   const companyTypeValues = Object.keys(CompanyType);
-
   const handleClose = () => {
-    navigate('/company');
+    props.history.push('/company');
   };
 
   useEffect(() => {
     if (isNew) {
       dispatch(reset());
     } else {
-      dispatch(getEntity(id));
+      dispatch(getEntity(props.match.params.id));
     }
   }, []);
 

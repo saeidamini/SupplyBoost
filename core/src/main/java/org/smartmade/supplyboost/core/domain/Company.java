@@ -16,7 +16,6 @@ import org.springframework.data.relational.core.mapping.Table;
 @Schema(description = "Entities for Portal Gateway")
 @Table("company")
 @org.springframework.data.elasticsearch.annotations.Document(indexName = "company")
-@SuppressWarnings("common-java:DuplicatedBlocks")
 public class Company implements Serializable {
 
     private static final long serialVersionUID = 1L;

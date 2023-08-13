@@ -1,23 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Table } from 'reactstrap';
 import { Translate, TextFormat } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+import { getEntities } from './notification.reducer';
+import { INotification } from 'app/shared/model/notification/notification.model';
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-import { INotification } from 'app/shared/model/notification/notification.model';
-import { getEntities } from './notification.reducer';
-
-export const Notification = () => {
+export const Notification = (props: RouteComponentProps<{ url: string }>) => {
   const dispatch = useAppDispatch();
 
-  const location = useLocation();
-  const navigate = useNavigate();
-
-  const notificationList = useAppSelector(state => state.core.notification.entities);
-  const loading = useAppSelector(state => state.core.notification.loading);
+  const notificationList = useAppSelector(state => state.notification.entities);
+  const loading = useAppSelector(state => state.notification.loading);
 
   useEffect(() => {
     dispatch(getEntities({}));
@@ -26,6 +22,8 @@ export const Notification = () => {
   const handleSyncList = () => {
     dispatch(getEntities({}));
   };
+
+  const { match } = props;
 
   return (
     <div>
@@ -36,7 +34,7 @@ export const Notification = () => {
             <FontAwesomeIcon icon="sync" spin={loading} />{' '}
             <Translate contentKey="coreApp.notificationNotification.home.refreshListLabel">Refresh List</Translate>
           </Button>
-          <Link to="/notification/new" className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
+          <Link to={`${match.url}/new`} className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
             <FontAwesomeIcon icon="plus" />
             &nbsp;
             <Translate contentKey="coreApp.notificationNotification.home.createLabel">Create new Notification</Translate>
@@ -76,7 +74,7 @@ export const Notification = () => {
               {notificationList.map((notification, i) => (
                 <tr key={`entity-${i}`} data-cy="entityTable">
                   <td>
-                    <Button tag={Link} to={`/notification/${notification.id}`} color="link" size="sm">
+                    <Button tag={Link} to={`${match.url}/${notification.id}`} color="link" size="sm">
                       {notification.id}
                     </Button>
                   </td>
@@ -92,13 +90,13 @@ export const Notification = () => {
                   <td>{notification.productId}</td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
-                      <Button tag={Link} to={`/notification/${notification.id}`} color="info" size="sm" data-cy="entityDetailsButton">
+                      <Button tag={Link} to={`${match.url}/${notification.id}`} color="info" size="sm" data-cy="entityDetailsButton">
                         <FontAwesomeIcon icon="eye" />{' '}
                         <span className="d-none d-md-inline">
                           <Translate contentKey="entity.action.view">View</Translate>
                         </span>
                       </Button>
-                      <Button tag={Link} to={`/notification/${notification.id}/edit`} color="primary" size="sm" data-cy="entityEditButton">
+                      <Button tag={Link} to={`${match.url}/${notification.id}/edit`} color="primary" size="sm" data-cy="entityEditButton">
                         <FontAwesomeIcon icon="pencil-alt" />{' '}
                         <span className="d-none d-md-inline">
                           <Translate contentKey="entity.action.edit">Edit</Translate>
@@ -106,7 +104,7 @@ export const Notification = () => {
                       </Button>
                       <Button
                         tag={Link}
-                        to={`/notification/${notification.id}/delete`}
+                        to={`${match.url}/${notification.id}/delete`}
                         color="danger"
                         size="sm"
                         data-cy="entityDeleteButton"

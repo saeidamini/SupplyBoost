@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.function.BiFunction;
-import org.apache.commons.lang3.StringUtils;
 import org.smartmade.supplyboost.core.domain.Company;
 import org.smartmade.supplyboost.core.domain.enumeration.CompanyType;
 import org.smartmade.supplyboost.core.domain.enumeration.Gender;
@@ -22,9 +21,6 @@ import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
 import org.springframework.data.r2dbc.repository.support.SimpleR2dbcRepository;
 import org.springframework.data.relational.core.query.Criteria;
 import org.springframework.data.relational.core.sql.Column;
-import org.springframework.data.relational.core.sql.Comparison;
-import org.springframework.data.relational.core.sql.Condition;
-import org.springframework.data.relational.core.sql.Conditions;
 import org.springframework.data.relational.core.sql.Expression;
 import org.springframework.data.relational.core.sql.Select;
 import org.springframework.data.relational.core.sql.SelectBuilder.SelectFromAndJoin;
@@ -36,7 +32,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
- * Spring Data R2DBC custom repository implementation for the Company entity.
+ * Spring Data SQL reactive custom repository implementation for the Company entity.
  */
 @SuppressWarnings("unused")
 class CompanyRepositoryInternalImpl extends SimpleR2dbcRepository<Company, Long> implements CompanyRepositoryInternal {
@@ -69,26 +65,30 @@ class CompanyRepositoryInternalImpl extends SimpleR2dbcRepository<Company, Long>
 
     @Override
     public Flux<Company> findAllBy(Pageable pageable) {
-        return createQuery(pageable, null).all();
+        return findAllBy(pageable, null);
     }
 
-    RowsFetchSpec<Company> createQuery(Pageable pageable, Condition whereClause) {
+    @Override
+    public Flux<Company> findAllBy(Pageable pageable, Criteria criteria) {
+        return createQuery(pageable, criteria).all();
+    }
+
+    RowsFetchSpec<Company> createQuery(Pageable pageable, Criteria criteria) {
         List<Expression> columns = CompanySqlHelper.getColumns(entityTable, EntityManager.ENTITY_ALIAS);
         SelectFromAndJoin selectFrom = Select.builder().select(columns).from(entityTable);
-        // we do not support Criteria here for now as of https://github.com/jhipster/generator-jhipster/issues/18269
-        String select = entityManager.createSelect(selectFrom, Company.class, pageable, whereClause);
+
+        String select = entityManager.createSelect(selectFrom, Company.class, pageable, criteria);
         return db.sql(select).map(this::process);
     }
 
     @Override
     public Flux<Company> findAll() {
-        return findAllBy(null);
+        return findAllBy(null, null);
     }
 
     @Override
     public Mono<Company> findById(Long id) {
-        Comparison whereClause = Conditions.isEqual(entityTable.column("id"), Conditions.just(id.toString()));
-        return createQuery(null, whereClause).one();
+        return createQuery(null, where(EntityManager.ENTITY_ALIAS + ".id").is(id)).one();
     }
 
     private Company process(Row row, RowMetadata metadata) {

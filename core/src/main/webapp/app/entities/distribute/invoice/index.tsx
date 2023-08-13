@@ -1,23 +1,23 @@
 import React from 'react';
-import { Route } from 'react-router-dom';
+import { Switch } from 'react-router-dom';
 
-import ErrorBoundaryRoutes from 'app/shared/error/error-boundary-routes';
+import ErrorBoundaryRoute from 'app/shared/error/error-boundary-route';
 
 import Invoice from './invoice';
 import InvoiceDetail from './invoice-detail';
 import InvoiceUpdate from './invoice-update';
 import InvoiceDeleteDialog from './invoice-delete-dialog';
 
-const InvoiceRoutes = () => (
-  <ErrorBoundaryRoutes>
-    <Route index element={<Invoice />} />
-    <Route path="new" element={<InvoiceUpdate />} />
-    <Route path=":id">
-      <Route index element={<InvoiceDetail />} />
-      <Route path="edit" element={<InvoiceUpdate />} />
-      <Route path="delete" element={<InvoiceDeleteDialog />} />
-    </Route>
-  </ErrorBoundaryRoutes>
+const Routes = ({ match }) => (
+  <>
+    <Switch>
+      <ErrorBoundaryRoute exact path={`${match.url}/new`} component={InvoiceUpdate} />
+      <ErrorBoundaryRoute exact path={`${match.url}/:id/edit`} component={InvoiceUpdate} />
+      <ErrorBoundaryRoute exact path={`${match.url}/:id`} component={InvoiceDetail} />
+      <ErrorBoundaryRoute path={match.url} component={Invoice} />
+    </Switch>
+    <ErrorBoundaryRoute exact path={`${match.url}/:id/delete`} component={InvoiceDeleteDialog} />
+  </>
 );
 
-export default InvoiceRoutes;
+export default Routes;

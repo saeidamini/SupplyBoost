@@ -41,7 +41,7 @@ export const HealthPage = () => {
   return (
     <div>
       <h2 id="health-page-heading" data-cy="healthPageHeading">
-        <Translate contentKey="health.title">Health Checks</Translate>
+        Health Checks
       </h2>
       <p>
         <Button onClick={fetchSystemHealth} color={isFetching ? 'btn btn-danger' : 'btn btn-primary'} disabled={isFetching}>
@@ -57,15 +57,9 @@ export const HealthPage = () => {
           <Table bordered aria-describedby="health-page-heading">
             <thead>
               <tr>
-                <th>
-                  <Translate contentKey="health.table.service">Service Name</Translate>
-                </th>
-                <th>
-                  <Translate contentKey="health.table.status">Status</Translate>
-                </th>
-                <th>
-                  <Translate contentKey="health.details.details">Details</Translate>
-                </th>
+                <th>Service Name</th>
+                <th>Status</th>
+                <th>Details</th>
               </tr>
             </thead>
             <tbody>

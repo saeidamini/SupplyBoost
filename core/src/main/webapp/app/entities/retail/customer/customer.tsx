@@ -1,30 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Table } from 'reactstrap';
 import { Translate, getSortState, JhiPagination, JhiItemCount } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+import { getEntities } from './customer.reducer';
+import { ICustomer } from 'app/shared/model/retail/customer.model';
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
 import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-import { ICustomer } from 'app/shared/model/retail/customer.model';
-import { getEntities } from './customer.reducer';
-
-export const Customer = () => {
+export const Customer = (props: RouteComponentProps<{ url: string }>) => {
   const dispatch = useAppDispatch();
 
-  const location = useLocation();
-  const navigate = useNavigate();
-
   const [paginationState, setPaginationState] = useState(
-    overridePaginationStateWithQueryParams(getSortState(location, ITEMS_PER_PAGE, 'id'), location.search)
+    overridePaginationStateWithQueryParams(getSortState(props.location, ITEMS_PER_PAGE, 'id'), props.location.search)
   );
 
-  const customerList = useAppSelector(state => state.core.customer.entities);
-  const loading = useAppSelector(state => state.core.customer.loading);
-  const totalItems = useAppSelector(state => state.core.customer.totalItems);
+  const customerList = useAppSelector(state => state.customer.entities);
+  const loading = useAppSelector(state => state.customer.loading);
+  const totalItems = useAppSelector(state => state.customer.totalItems);
 
   const getAllEntities = () => {
     dispatch(
@@ -39,8 +35,8 @@ export const Customer = () => {
   const sortEntities = () => {
     getAllEntities();
     const endURL = `?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`;
-    if (location.search !== endURL) {
-      navigate(`${location.pathname}${endURL}`);
+    if (props.location.search !== endURL) {
+      props.history.push(`${props.location.pathname}${endURL}`);
     }
   };
 
@@ -49,7 +45,7 @@ export const Customer = () => {
   }, [paginationState.activePage, paginationState.order, paginationState.sort]);
 
   useEffect(() => {
-    const params = new URLSearchParams(location.search);
+    const params = new URLSearchParams(props.location.search);
     const page = params.get('page');
     const sort = params.get(SORT);
     if (page && sort) {
@@ -61,7 +57,7 @@ export const Customer = () => {
         order: sortSplit[1],
       });
     }
-  }, [location.search]);
+  }, [props.location.search]);
 
   const sort = p => () => {
     setPaginationState({
@@ -81,6 +77,8 @@ export const Customer = () => {
     sortEntities();
   };
 
+  const { match } = props;
+
   return (
     <div>
       <h2 id="customer-heading" data-cy="CustomerHeading">
@@ -90,7 +88,7 @@ export const Customer = () => {
             <FontAwesomeIcon icon="sync" spin={loading} />{' '}
             <Translate contentKey="coreApp.retailCustomer.home.refreshListLabel">Refresh List</Translate>
           </Button>
-          <Link to="/customer/new" className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
+          <Link to={`${match.url}/new`} className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
             <FontAwesomeIcon icon="plus" />
             &nbsp;
             <Translate contentKey="coreApp.retailCustomer.home.createLabel">Create new Customer</Translate>
@@ -142,7 +140,7 @@ export const Customer = () => {
               {customerList.map((customer, i) => (
                 <tr key={`entity-${i}`} data-cy="entityTable">
                   <td>
-                    <Button tag={Link} to={`/customer/${customer.id}`} color="link" size="sm">
+                    <Button tag={Link} to={`${match.url}/${customer.id}`} color="link" size="sm">
                       {customer.id}
                     </Button>
                   </td>
@@ -160,7 +158,7 @@ export const Customer = () => {
                   <td>{customer.user ? customer.user.login : ''}</td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
-                      <Button tag={Link} to={`/customer/${customer.id}`} color="info" size="sm" data-cy="entityDetailsButton">
+                      <Button tag={Link} to={`${match.url}/${customer.id}`} color="info" size="sm" data-cy="entityDetailsButton">
                         <FontAwesomeIcon icon="eye" />{' '}
                         <span className="d-none d-md-inline">
                           <Translate contentKey="entity.action.view">View</Translate>
@@ -168,7 +166,7 @@ export const Customer = () => {
                       </Button>
                       <Button
                         tag={Link}
-                        to={`/customer/${customer.id}/edit?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
+                        to={`${match.url}/${customer.id}/edit?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
                         color="primary"
                         size="sm"
                         data-cy="entityEditButton"
@@ -180,7 +178,7 @@ export const Customer = () => {
                       </Button>
                       <Button
                         tag={Link}
-                        to={`/customer/${customer.id}/delete?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
+                        to={`${match.url}/${customer.id}/delete?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
                         color="danger"
                         size="sm"
                         data-cy="entityDeleteButton"

@@ -1,6 +1,6 @@
 {
   "applications": ["core", "retail"],
-  "changelogDate": "20221017075125",
+  "changelogDate": "20221017095437",
   "clientRootFolder": "retail",
   "databaseType": "sql",
   "dto": "no",
@@ -28,7 +28,7 @@
       "fieldType": "Long"
     },
     {
-      "fieldName": "customer",
+      "fieldName": "customerName",
       "fieldType": "String",
       "fieldValidateRules": ["required"]
     }
@@ -49,6 +49,7 @@
     {
       "otherEntityField": "lastname",
       "otherEntityName": "customer",
+      "otherEntityRelationshipName": "productOrder",
       "relationshipName": "customer",
       "relationshipType": "many-to-one",
       "relationshipValidateRules": "required"

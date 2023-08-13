@@ -5,21 +5,18 @@
     "applications": {
       "distribute": {
         "applicationIndex": 2,
-        "clientFramework": "no",
         "serverPort": "8082"
       },
       "notification": {
         "applicationIndex": 3,
-        "clientFramework": "no",
         "serverPort": "8083"
       },
       "retail": {
         "applicationIndex": 1,
-        "clientFramework": "no",
         "serverPort": "8081"
       }
     },
-    "authenticationType": "jwt",
+    "authenticationType": "oauth2",
     "baseName": "core",
     "blueprints": [],
     "buildTool": "maven",
@@ -28,7 +25,7 @@
     "clientPackageManager": "npm",
     "clientTheme": "none",
     "clientThemeVariant": "",
-    "creationTimestamp": 1665992785682,
+    "creationTimestamp": 1666000177109,
     "databaseType": "sql",
     "devDatabaseType": "h2Memory",
     "devServerPort": 9060,
@@ -52,10 +49,10 @@
     "entitySuffix": "",
     "gradleEnterpriseHost": "",
     "jhiPrefix": "scm",
-    "jhipsterVersion": "7.9.3",
-    "jwtSecretKey": "NTI3OGJlMTExZGE4NDEwNmNlMzQzYjg1NTFhOTY1ZDI5MWRkZmEzYzUwNjQwNGZmYTg1ZDY2ZGM2YTFjMDU2NDE5N2FjZDgyMWZmMDcxYmM4Yzc4MjI0NjUzOTk1YmM3MTc5ZGNmOWRhZDBhZWVjODg0YzVlOWE3YzMzMmZkNjI=",
+    "jhipsterVersion": "7.7.0",
+    "jwtSecretKey": "MDUyMzIyY2I2NDVkZWRiOWViZjgyZDJkYzdhZDhhOTM0YzdlNGM0ZWE1OTcxNmUxNWVmMDcxMjE2NWQ4MmJkODEwMDY4ZDJmMjk1ZDIzNjYyMWVjZjJjZmU3NTlhMWVmYjdkZDlmOWZkNjgwMWM5YzljYzljOTJmMDE1NmRkZWU=",
     "languages": ["en", "fa", "de"],
-    "lastLiquibaseTimestamp": 1665993385000,
+    "lastLiquibaseTimestamp": 1666000777000,
     "messageBroker": false,
     "monorepository": true,
     "nativeLanguage": "en",
@@ -69,10 +66,9 @@
     "serverPort": "8080",
     "serviceDiscoveryType": "eureka",
     "skipCheckLengthOfIdentifier": false,
-    "skipClient": false,
     "skipCommitHook": true,
     "skipFakeData": false,
-    "skipUserManagement": false,
+    "skipUserManagement": true,
     "testFrameworks": ["cypress"],
     "websocket": false,
     "withAdminUi": true
