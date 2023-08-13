@@ -1,6 +1,6 @@
 {
-  "applications": ["retail"],
-  "changelogDate": "20221017075852",
+  "applications": ["core", "retail"],
+  "changelogDate": "20221017095537",
   "clientRootFolder": "retail",
   "databaseType": "sql",
   "dto": "no",
@@ -35,6 +35,7 @@
     }
   ],
   "fluentMethods": true,
+  "javadoc": "Entities for Retail microservice",
   "jpaMetamodelFiltering": false,
   "microserviceName": "retail",
   "name": "Product",

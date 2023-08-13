@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 /**
- * Spring Data JPA repository for the Product entity.
+ * Spring Data SQL repository for the Product entity.
  */
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {

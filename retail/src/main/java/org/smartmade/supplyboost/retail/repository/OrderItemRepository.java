@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 /**
- * Spring Data JPA repository for the OrderItem entity.
+ * Spring Data SQL repository for the OrderItem entity.
  */
 @Repository
 public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {

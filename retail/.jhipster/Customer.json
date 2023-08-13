@@ -1,6 +1,6 @@
 {
-  "applications": ["retail"],
-  "changelogDate": "20221017080352",
+  "applications": ["core", "retail"],
+  "changelogDate": "20221017095237",
   "clientRootFolder": "retail",
   "databaseType": "sql",
   "dto": "no",
@@ -60,6 +60,16 @@
   "name": "Customer",
   "pagination": "pagination",
   "readOnly": false,
-  "relationships": [],
+  "relationships": [
+    {
+      "otherEntityField": "login",
+      "otherEntityName": "user",
+      "otherEntityRelationshipName": "customer",
+      "ownerSide": true,
+      "relationshipName": "user",
+      "relationshipType": "one-to-one",
+      "relationshipValidateRules": "required"
+    }
+  ],
   "service": "serviceClass"
 }

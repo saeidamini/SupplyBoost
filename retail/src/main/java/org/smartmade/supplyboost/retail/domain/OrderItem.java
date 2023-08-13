@@ -15,7 +15,6 @@ import org.smartmade.supplyboost.retail.domain.enumeration.OrderItemStatus;
 @Entity
 @Table(name = "order_item")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@SuppressWarnings("common-java:DuplicatedBlocks")
 public class OrderItem implements Serializable {
 
     private static final long serialVersionUID = 1L;

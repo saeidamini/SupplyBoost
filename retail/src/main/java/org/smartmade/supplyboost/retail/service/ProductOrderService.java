@@ -37,17 +37,6 @@ public class ProductOrderService {
     }
 
     /**
-     * Update a productOrder.
-     *
-     * @param productOrder the entity to save.
-     * @return the persisted entity.
-     */
-    public ProductOrder update(ProductOrder productOrder) {
-        log.debug("Request to update ProductOrder : {}", productOrder);
-        return productOrderRepository.save(productOrder);
-    }
-
-    /**
      * Partially update a productOrder.
      *
      * @param productOrder the entity to update partially.
@@ -71,8 +60,8 @@ public class ProductOrderService {
                 if (productOrder.getInvoiceId() != null) {
                     existingProductOrder.setInvoiceId(productOrder.getInvoiceId());
                 }
-                if (productOrder.getCustomer() != null) {
-                    existingProductOrder.setCustomer(productOrder.getCustomer());
+                if (productOrder.getCustomerName() != null) {
+                    existingProductOrder.setCustomerName(productOrder.getCustomerName());
                 }
 
                 return existingProductOrder;

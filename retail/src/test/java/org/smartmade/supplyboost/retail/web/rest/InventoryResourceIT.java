@@ -2,29 +2,22 @@ package org.smartmade.supplyboost.retail.web.rest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
-import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.smartmade.supplyboost.retail.IntegrationTest;
 import org.smartmade.supplyboost.retail.domain.Inventory;
 import org.smartmade.supplyboost.retail.domain.Product;
 import org.smartmade.supplyboost.retail.repository.InventoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -34,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
  * Integration tests for the {@link InventoryResource} REST controller.
  */
 @IntegrationTest
-@ExtendWith(MockitoExtension.class)
 @AutoConfigureMockMvc
 @WithMockUser
 class InventoryResourceIT {
@@ -50,9 +42,6 @@ class InventoryResourceIT {
 
     @Autowired
     private InventoryRepository inventoryRepository;
-
-    @Mock
-    private InventoryRepository inventoryRepositoryMock;
 
     @Autowired
     private EntityManager em;
@@ -115,7 +104,12 @@ class InventoryResourceIT {
         int databaseSizeBeforeCreate = inventoryRepository.findAll().size();
         // Create the Inventory
         restInventoryMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(inventory)))
+            .perform(
+                post(ENTITY_API_URL)
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(TestUtil.convertObjectToJsonBytes(inventory))
+            )
             .andExpect(status().isCreated());
 
         // Validate the Inventory in the database
@@ -135,7 +129,12 @@ class InventoryResourceIT {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restInventoryMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(inventory)))
+            .perform(
+                post(ENTITY_API_URL)
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(TestUtil.convertObjectToJsonBytes(inventory))
+            )
             .andExpect(status().isBadRequest());
 
         // Validate the Inventory in the database
@@ -153,7 +152,12 @@ class InventoryResourceIT {
         // Create the Inventory, which fails.
 
         restInventoryMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(inventory)))
+            .perform(
+                post(ENTITY_API_URL)
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(TestUtil.convertObjectToJsonBytes(inventory))
+            )
             .andExpect(status().isBadRequest());
 
         List<Inventory> inventoryList = inventoryRepository.findAll();
@@ -173,23 +177,6 @@ class InventoryResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(inventory.getId().intValue())))
             .andExpect(jsonPath("$.[*].amount").value(hasItem(DEFAULT_AMOUNT.intValue())));
-    }
-
-    @SuppressWarnings({ "unchecked" })
-    void getAllInventoriesWithEagerRelationshipsIsEnabled() throws Exception {
-        when(inventoryRepositoryMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
-
-        restInventoryMockMvc.perform(get(ENTITY_API_URL + "?eagerload=true")).andExpect(status().isOk());
-
-        verify(inventoryRepositoryMock, times(1)).findAllWithEagerRelationships(any());
-    }
-
-    @SuppressWarnings({ "unchecked" })
-    void getAllInventoriesWithEagerRelationshipsIsNotEnabled() throws Exception {
-        when(inventoryRepositoryMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
-
-        restInventoryMockMvc.perform(get(ENTITY_API_URL + "?eagerload=false")).andExpect(status().isOk());
-        verify(inventoryRepositoryMock, times(1)).findAll(any(Pageable.class));
     }
 
     @Test
@@ -216,7 +203,7 @@ class InventoryResourceIT {
 
     @Test
     @Transactional
-    void putExistingInventory() throws Exception {
+    void putNewInventory() throws Exception {
         // Initialize the database
         inventoryRepository.saveAndFlush(inventory);
 
@@ -231,6 +218,7 @@ class InventoryResourceIT {
         restInventoryMockMvc
             .perform(
                 put(ENTITY_API_URL_ID, updatedInventory.getId())
+                    .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(TestUtil.convertObjectToJsonBytes(updatedInventory))
             )
@@ -253,6 +241,7 @@ class InventoryResourceIT {
         restInventoryMockMvc
             .perform(
                 put(ENTITY_API_URL_ID, inventory.getId())
+                    .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(TestUtil.convertObjectToJsonBytes(inventory))
             )
@@ -273,6 +262,7 @@ class InventoryResourceIT {
         restInventoryMockMvc
             .perform(
                 put(ENTITY_API_URL_ID, count.incrementAndGet())
+                    .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(TestUtil.convertObjectToJsonBytes(inventory))
             )
@@ -291,7 +281,12 @@ class InventoryResourceIT {
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restInventoryMockMvc
-            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(inventory)))
+            .perform(
+                put(ENTITY_API_URL)
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(TestUtil.convertObjectToJsonBytes(inventory))
+            )
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Inventory in the database
@@ -314,6 +309,7 @@ class InventoryResourceIT {
         restInventoryMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, partialUpdatedInventory.getId())
+                    .with(csrf())
                     .contentType("application/merge-patch+json")
                     .content(TestUtil.convertObjectToJsonBytes(partialUpdatedInventory))
             )
@@ -343,6 +339,7 @@ class InventoryResourceIT {
         restInventoryMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, partialUpdatedInventory.getId())
+                    .with(csrf())
                     .contentType("application/merge-patch+json")
                     .content(TestUtil.convertObjectToJsonBytes(partialUpdatedInventory))
             )
@@ -365,6 +362,7 @@ class InventoryResourceIT {
         restInventoryMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, inventory.getId())
+                    .with(csrf())
                     .contentType("application/merge-patch+json")
                     .content(TestUtil.convertObjectToJsonBytes(inventory))
             )
@@ -385,6 +383,7 @@ class InventoryResourceIT {
         restInventoryMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, count.incrementAndGet())
+                    .with(csrf())
                     .contentType("application/merge-patch+json")
                     .content(TestUtil.convertObjectToJsonBytes(inventory))
             )
@@ -404,7 +403,10 @@ class InventoryResourceIT {
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restInventoryMockMvc
             .perform(
-                patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(inventory))
+                patch(ENTITY_API_URL)
+                    .with(csrf())
+                    .contentType("application/merge-patch+json")
+                    .content(TestUtil.convertObjectToJsonBytes(inventory))
             )
             .andExpect(status().isMethodNotAllowed());
 
@@ -423,7 +425,7 @@ class InventoryResourceIT {
 
         // Delete the inventory
         restInventoryMockMvc
-            .perform(delete(ENTITY_API_URL_ID, inventory.getId()).accept(MediaType.APPLICATION_JSON))
+            .perform(delete(ENTITY_API_URL_ID, inventory.getId()).with(csrf()).accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item

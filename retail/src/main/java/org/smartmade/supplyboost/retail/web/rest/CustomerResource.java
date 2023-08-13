@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.smartmade.supplyboost.retail.domain.Customer;
 import org.smartmade.supplyboost.retail.repository.CustomerRepository;
+import org.smartmade.supplyboost.retail.repository.UserRepository;
 import org.smartmade.supplyboost.retail.service.CustomerService;
 import org.smartmade.supplyboost.retail.web.rest.errors.BadRequestAlertException;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,9 +44,12 @@ public class CustomerResource {
 
     private final CustomerRepository customerRepository;
 
-    public CustomerResource(CustomerService customerService, CustomerRepository customerRepository) {
+    private final UserRepository userRepository;
+
+    public CustomerResource(CustomerService customerService, CustomerRepository customerRepository, UserRepository userRepository) {
         this.customerService = customerService;
         this.customerRepository = customerRepository;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -61,6 +65,12 @@ public class CustomerResource {
         if (customer.getId() != null) {
             throw new BadRequestAlertException("A new customer cannot already have an ID", ENTITY_NAME, "idexists");
         }
+
+        if (customer.getUser() != null) {
+            // Save user in case it's new and only exists in gateway
+            userRepository.save(customer.getUser());
+        }
+
         Customer result = customerService.save(customer);
         return ResponseEntity
             .created(new URI("/api/customers/" + result.getId()))
@@ -95,7 +105,12 @@ public class CustomerResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Customer result = customerService.update(customer);
+        if (customer.getUser() != null) {
+            // Save user in case it's new and only exists in gateway
+            userRepository.save(customer.getUser());
+        }
+
+        Customer result = customerService.save(customer);
         return ResponseEntity
             .ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, customer.getId().toString()))
@@ -130,6 +145,11 @@ public class CustomerResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
+        if (customer.getUser() != null) {
+            // Save user in case it's new and only exists in gateway
+            userRepository.save(customer.getUser());
+        }
+
         Optional<Customer> result = customerService.partialUpdate(customer);
 
         return ResponseUtil.wrapOrNotFound(
@@ -142,12 +162,21 @@ public class CustomerResource {
      * {@code GET  /customers} : get all the customers.
      *
      * @param pageable the pagination information.
+     * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of customers in body.
      */
     @GetMapping("/customers")
-    public ResponseEntity<List<Customer>> getAllCustomers(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
+    public ResponseEntity<List<Customer>> getAllCustomers(
+        @org.springdoc.api.annotations.ParameterObject Pageable pageable,
+        @RequestParam(required = false, defaultValue = "true") boolean eagerload
+    ) {
         log.debug("REST request to get a page of Customers");
-        Page<Customer> page = customerService.findAll(pageable);
+        Page<Customer> page;
+        if (eagerload) {
+            page = customerService.findAllWithEagerRelationships(pageable);
+        } else {
+            page = customerService.findAll(pageable);
+        }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 /**
- * Spring Data JPA repository for the ProductOrder entity.
+ * Spring Data SQL repository for the ProductOrder entity.
  */
 @Repository
 public interface ProductOrderRepository extends JpaRepository<ProductOrder, Long> {

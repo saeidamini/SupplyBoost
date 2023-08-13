@@ -37,17 +37,6 @@ public class CustomerService {
     }
 
     /**
-     * Update a customer.
-     *
-     * @param customer the entity to save.
-     * @return the persisted entity.
-     */
-    public Customer update(Customer customer) {
-        log.debug("Request to update Customer : {}", customer);
-        return customerRepository.save(customer);
-    }
-
-    /**
      * Partially update a customer.
      *
      * @param customer the entity to update partially.
@@ -105,6 +94,15 @@ public class CustomerService {
     }
 
     /**
+     * Get all the customers with eager load of many-to-many relationships.
+     *
+     * @return the list of entities.
+     */
+    public Page<Customer> findAllWithEagerRelationships(Pageable pageable) {
+        return customerRepository.findAllWithEagerRelationships(pageable);
+    }
+
+    /**
      * Get one customer by id.
      *
      * @param id the id of the entity.
@@ -113,7 +111,7 @@ public class CustomerService {
     @Transactional(readOnly = true)
     public Optional<Customer> findOne(Long id) {
         log.debug("Request to get Customer : {}", id);
-        return customerRepository.findById(id);
+        return customerRepository.findOneWithEagerRelationships(id);
     }
 
     /**

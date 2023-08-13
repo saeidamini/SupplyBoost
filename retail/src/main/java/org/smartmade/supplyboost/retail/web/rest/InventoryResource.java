@@ -148,11 +148,7 @@ public class InventoryResource {
     @GetMapping("/inventories")
     public List<Inventory> getAllInventories(@RequestParam(required = false, defaultValue = "false") boolean eagerload) {
         log.debug("REST request to get all Inventories");
-        if (eagerload) {
-            return inventoryRepository.findAllWithEagerRelationships();
-        } else {
-            return inventoryRepository.findAll();
-        }
+        return inventoryRepository.findAllWithEagerRelationships();
     }
 
     /**

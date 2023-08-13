@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 /**
- * Spring Data JPA repository for the Inventory entity.
+ * Spring Data SQL repository for the Inventory entity.
  */
 @Repository
 public interface InventoryRepository extends JpaRepository<Inventory, Long> {

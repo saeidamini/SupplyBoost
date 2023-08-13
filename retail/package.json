@@ -22,12 +22,11 @@
     "ci:e2e:teardown": "npm run ci:e2e:teardown:docker",
     "ci:e2e:teardown:docker": "npm run docker:db:down --if-present && npm run docker:others:down && docker ps -a",
     "docker:app:up": "docker-compose -f src/main/docker/app.yml up -d",
-    "docker:db:down": "docker-compose -f src/main/docker/postgresql.yml down -v",
+    "docker:db:down": "docker-compose -f src/main/docker/postgresql.yml down -v --remove-orphans",
     "docker:db:up": "docker-compose -f src/main/docker/postgresql.yml up -d",
-    "docker:jhipster-registry:await": "echo \"Waiting for jhipster-registry to start\" && wait-on -t 180000 http-get://localhost:8761/management/health && echo \"jhipster-registry started\"",
-    "docker:jhipster-registry:down": "docker-compose -f src/main/docker/jhipster-registry.yml down -v",
+    "docker:jhipster-registry:down": "docker-compose -f src/main/docker/jhipster-registry.yml down -v --remove-orphans",
     "docker:jhipster-registry:up": "docker-compose -f src/main/docker/jhipster-registry.yml up -d",
-    "docker:others:await": "npm run docker:jhipster-registry:await",
+    "docker:others:await": "echo \"Waiting for jhipster-registry to start\" && wait-on -t 180000 http-get://localhost:8761/management/health && echo \"jhipster-registry started\"",
     "docker:others:down": "npm run docker:jhipster-registry:down",
     "predocker:others:up": "",
     "docker:others:up": "npm run docker:jhipster-registry:up",
@@ -41,22 +40,22 @@
     "java:war": "./mvnw -ntp verify -DskipTests --batch-mode -Pwar",
     "java:war:dev": "npm run java:war -- -Pdev,webapp",
     "java:war:prod": "npm run java:war -- -Pprod",
-    "prettier:check": "prettier --check \"{,src/**/,.blueprint/**/}*.{md,json,yml,html,java}\"",
-    "prettier:format": "prettier --write \"{,src/**/,.blueprint/**/}*.{md,json,yml,html,java}\""
+    "prettier:check": "prettier --check \"{,src/**/}*.{md,json,yml,html,java}\"",
+    "prettier:format": "prettier --write \"{,src/**/}*.{md,json,yml,html,java}\""
   },
   "config": {
-    "backend_port": "8081",
+    "backend_port": "8080",
     "default_environment": "prod",
     "packaging": "jar"
   },
   "devDependencies": {
-    "generator-jhipster": "7.9.3",
-    "prettier": "2.7.1",
-    "prettier-plugin-java": "1.6.2",
-    "prettier-plugin-packagejson": "2.2.18"
+    "generator-jhipster": "7.7.0",
+    "prettier": "2.5.1",
+    "prettier-plugin-java": "1.6.1",
+    "prettier-plugin-packagejson": "2.2.15"
   },
   "engines": {
-    "node": ">=16.17.0"
+    "node": ">=16.14.0"
   },
   "cacheDirectories": [
     "node_modules"

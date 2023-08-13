@@ -2,6 +2,7 @@ package org.smartmade.supplyboost.retail.web.rest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -13,8 +14,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.smartmade.supplyboost.retail.IntegrationTest;
 import org.smartmade.supplyboost.retail.domain.Customer;
+import org.smartmade.supplyboost.retail.domain.User;
 import org.smartmade.supplyboost.retail.domain.enumeration.Gender;
 import org.smartmade.supplyboost.retail.repository.CustomerRepository;
+import org.smartmade.supplyboost.retail.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
@@ -67,6 +70,9 @@ class CustomerResourceIT {
     private CustomerRepository customerRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private EntityManager em;
 
     @Autowired
@@ -91,6 +97,11 @@ class CustomerResourceIT {
             .addressLine2(DEFAULT_ADDRESS_LINE_2)
             .city(DEFAULT_CITY)
             .country(DEFAULT_COUNTRY);
+        // Add required entity
+        User user = UserResourceIT.createEntity(em);
+        em.persist(user);
+        em.flush();
+        customer.setUser(user);
         return customer;
     }
 
@@ -111,6 +122,11 @@ class CustomerResourceIT {
             .addressLine2(UPDATED_ADDRESS_LINE_2)
             .city(UPDATED_CITY)
             .country(UPDATED_COUNTRY);
+        // Add required entity
+        User user = UserResourceIT.createEntity(em);
+        em.persist(user);
+        em.flush();
+        customer.setUser(user);
         return customer;
     }
 
@@ -125,7 +141,12 @@ class CustomerResourceIT {
         int databaseSizeBeforeCreate = customerRepository.findAll().size();
         // Create the Customer
         restCustomerMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(customer)))
+            .perform(
+                post(ENTITY_API_URL)
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(TestUtil.convertObjectToJsonBytes(customer))
+            )
             .andExpect(status().isCreated());
 
         // Validate the Customer in the database
@@ -153,7 +174,12 @@ class CustomerResourceIT {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restCustomerMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(customer)))
+            .perform(
+                post(ENTITY_API_URL)
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(TestUtil.convertObjectToJsonBytes(customer))
+            )
             .andExpect(status().isBadRequest());
 
         // Validate the Customer in the database
@@ -171,7 +197,12 @@ class CustomerResourceIT {
         // Create the Customer, which fails.
 
         restCustomerMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(customer)))
+            .perform(
+                post(ENTITY_API_URL)
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(TestUtil.convertObjectToJsonBytes(customer))
+            )
             .andExpect(status().isBadRequest());
 
         List<Customer> customerList = customerRepository.findAll();
@@ -188,7 +219,12 @@ class CustomerResourceIT {
         // Create the Customer, which fails.
 
         restCustomerMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(customer)))
+            .perform(
+                post(ENTITY_API_URL)
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(TestUtil.convertObjectToJsonBytes(customer))
+            )
             .andExpect(status().isBadRequest());
 
         List<Customer> customerList = customerRepository.findAll();
@@ -205,7 +241,12 @@ class CustomerResourceIT {
         // Create the Customer, which fails.
 
         restCustomerMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(customer)))
+            .perform(
+                post(ENTITY_API_URL)
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(TestUtil.convertObjectToJsonBytes(customer))
+            )
             .andExpect(status().isBadRequest());
 
         List<Customer> customerList = customerRepository.findAll();
@@ -222,7 +263,12 @@ class CustomerResourceIT {
         // Create the Customer, which fails.
 
         restCustomerMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(customer)))
+            .perform(
+                post(ENTITY_API_URL)
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(TestUtil.convertObjectToJsonBytes(customer))
+            )
             .andExpect(status().isBadRequest());
 
         List<Customer> customerList = customerRepository.findAll();
@@ -239,7 +285,12 @@ class CustomerResourceIT {
         // Create the Customer, which fails.
 
         restCustomerMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(customer)))
+            .perform(
+                post(ENTITY_API_URL)
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(TestUtil.convertObjectToJsonBytes(customer))
+            )
             .andExpect(status().isBadRequest());
 
         List<Customer> customerList = customerRepository.findAll();
@@ -256,7 +307,12 @@ class CustomerResourceIT {
         // Create the Customer, which fails.
 
         restCustomerMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(customer)))
+            .perform(
+                post(ENTITY_API_URL)
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(TestUtil.convertObjectToJsonBytes(customer))
+            )
             .andExpect(status().isBadRequest());
 
         List<Customer> customerList = customerRepository.findAll();
@@ -273,7 +329,12 @@ class CustomerResourceIT {
         // Create the Customer, which fails.
 
         restCustomerMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(customer)))
+            .perform(
+                post(ENTITY_API_URL)
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(TestUtil.convertObjectToJsonBytes(customer))
+            )
             .andExpect(status().isBadRequest());
 
         List<Customer> customerList = customerRepository.findAll();
@@ -290,7 +351,12 @@ class CustomerResourceIT {
         // Create the Customer, which fails.
 
         restCustomerMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(customer)))
+            .perform(
+                post(ENTITY_API_URL)
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(TestUtil.convertObjectToJsonBytes(customer))
+            )
             .andExpect(status().isBadRequest());
 
         List<Customer> customerList = customerRepository.findAll();
@@ -352,7 +418,7 @@ class CustomerResourceIT {
 
     @Test
     @Transactional
-    void putExistingCustomer() throws Exception {
+    void putNewCustomer() throws Exception {
         // Initialize the database
         customerRepository.saveAndFlush(customer);
 
@@ -376,6 +442,7 @@ class CustomerResourceIT {
         restCustomerMockMvc
             .perform(
                 put(ENTITY_API_URL_ID, updatedCustomer.getId())
+                    .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(TestUtil.convertObjectToJsonBytes(updatedCustomer))
             )
@@ -406,6 +473,7 @@ class CustomerResourceIT {
         restCustomerMockMvc
             .perform(
                 put(ENTITY_API_URL_ID, customer.getId())
+                    .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(TestUtil.convertObjectToJsonBytes(customer))
             )
@@ -426,6 +494,7 @@ class CustomerResourceIT {
         restCustomerMockMvc
             .perform(
                 put(ENTITY_API_URL_ID, count.incrementAndGet())
+                    .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(TestUtil.convertObjectToJsonBytes(customer))
             )
@@ -444,7 +513,12 @@ class CustomerResourceIT {
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restCustomerMockMvc
-            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(customer)))
+            .perform(
+                put(ENTITY_API_URL)
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(TestUtil.convertObjectToJsonBytes(customer))
+            )
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Customer in the database
@@ -474,6 +548,7 @@ class CustomerResourceIT {
         restCustomerMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, partialUpdatedCustomer.getId())
+                    .with(csrf())
                     .contentType("application/merge-patch+json")
                     .content(TestUtil.convertObjectToJsonBytes(partialUpdatedCustomer))
             )
@@ -520,6 +595,7 @@ class CustomerResourceIT {
         restCustomerMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, partialUpdatedCustomer.getId())
+                    .with(csrf())
                     .contentType("application/merge-patch+json")
                     .content(TestUtil.convertObjectToJsonBytes(partialUpdatedCustomer))
             )
@@ -550,6 +626,7 @@ class CustomerResourceIT {
         restCustomerMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, customer.getId())
+                    .with(csrf())
                     .contentType("application/merge-patch+json")
                     .content(TestUtil.convertObjectToJsonBytes(customer))
             )
@@ -570,6 +647,7 @@ class CustomerResourceIT {
         restCustomerMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, count.incrementAndGet())
+                    .with(csrf())
                     .contentType("application/merge-patch+json")
                     .content(TestUtil.convertObjectToJsonBytes(customer))
             )
@@ -588,7 +666,12 @@ class CustomerResourceIT {
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restCustomerMockMvc
-            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(customer)))
+            .perform(
+                patch(ENTITY_API_URL)
+                    .with(csrf())
+                    .contentType("application/merge-patch+json")
+                    .content(TestUtil.convertObjectToJsonBytes(customer))
+            )
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Customer in the database
@@ -606,7 +689,7 @@ class CustomerResourceIT {
 
         // Delete the customer
         restCustomerMockMvc
-            .perform(delete(ENTITY_API_URL_ID, customer.getId()).accept(MediaType.APPLICATION_JSON))
+            .perform(delete(ENTITY_API_URL_ID, customer.getId()).with(csrf()).accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item

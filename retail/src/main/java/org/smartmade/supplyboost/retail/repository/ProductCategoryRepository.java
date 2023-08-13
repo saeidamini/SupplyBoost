@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 
 /**
- * Spring Data JPA repository for the ProductCategory entity.
+ * Spring Data SQL repository for the ProductCategory entity.
  */
 @SuppressWarnings("unused")
 @Repository

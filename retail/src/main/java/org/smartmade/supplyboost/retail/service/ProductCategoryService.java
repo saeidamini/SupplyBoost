@@ -36,17 +36,6 @@ public class ProductCategoryService {
     }
 
     /**
-     * Update a productCategory.
-     *
-     * @param productCategory the entity to save.
-     * @return the persisted entity.
-     */
-    public ProductCategory update(ProductCategory productCategory) {
-        log.debug("Request to update ProductCategory : {}", productCategory);
-        return productCategoryRepository.save(productCategory);
-    }
-
-    /**
      * Partially update a productCategory.
      *
      * @param productCategory the entity to update partially.

@@ -13,7 +13,6 @@ import org.smartmade.supplyboost.retail.domain.enumeration.Gender;
 @Entity
 @Table(name = "customer")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@SuppressWarnings("common-java:DuplicatedBlocks")
 public class Customer implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -60,6 +59,11 @@ public class Customer implements Serializable {
     @NotNull
     @Column(name = "country", nullable = false)
     private String country;
+
+    @OneToOne(optional = false)
+    @NotNull
+    @JoinColumn(unique = true)
+    private User user;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -191,6 +195,19 @@ public class Customer implements Serializable {
 
     public void setCountry(String country) {
         this.country = country;
+    }
+
+    public User getUser() {
+        return this.user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Customer user(User user) {
+        this.setUser(user);
+        return this;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here

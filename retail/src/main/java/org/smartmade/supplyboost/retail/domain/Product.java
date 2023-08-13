@@ -1,6 +1,7 @@
 package org.smartmade.supplyboost.retail.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import javax.persistence.*;
@@ -10,12 +11,12 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.smartmade.supplyboost.retail.domain.enumeration.Size;
 
 /**
- * A Product.
+ * Entities for Retail microservice
  */
+@Schema(description = "Entities for Retail microservice")
 @Entity
 @Table(name = "product")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@SuppressWarnings("common-java:DuplicatedBlocks")
 public class Product implements Serializable {
 
     private static final long serialVersionUID = 1L;

@@ -37,17 +37,6 @@ public class ProductService {
     }
 
     /**
-     * Update a product.
-     *
-     * @param product the entity to save.
-     * @return the persisted entity.
-     */
-    public Product update(Product product) {
-        log.debug("Request to update Product : {}", product);
-        return productRepository.save(product);
-    }
-
-    /**
      * Partially update a product.
      *
      * @param product the entity to update partially.

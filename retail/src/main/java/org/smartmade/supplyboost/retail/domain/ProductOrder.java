@@ -17,7 +17,6 @@ import org.smartmade.supplyboost.retail.domain.enumeration.OrderStatus;
 @Entity
 @Table(name = "product_order")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@SuppressWarnings("common-java:DuplicatedBlocks")
 public class ProductOrder implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -45,8 +44,8 @@ public class ProductOrder implements Serializable {
     private Long invoiceId;
 
     @NotNull
-    @Column(name = "customer", nullable = false)
-    private String customer;
+    @Column(name = "customer_name", nullable = false)
+    private String customerName;
 
     @OneToMany(mappedBy = "order")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
@@ -55,6 +54,7 @@ public class ProductOrder implements Serializable {
 
     @ManyToOne(optional = false)
     @NotNull
+    @JsonIgnoreProperties(value = { "user" }, allowSetters = true)
     private Customer customer;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
@@ -124,17 +124,17 @@ public class ProductOrder implements Serializable {
         this.invoiceId = invoiceId;
     }
 
-    public String getCustomer() {
-        return this.customer;
+    public String getCustomerName() {
+        return this.customerName;
     }
 
-    public ProductOrder customer(String customer) {
-        this.setCustomer(customer);
+    public ProductOrder customerName(String customerName) {
+        this.setCustomerName(customerName);
         return this;
     }
 
-    public void setCustomer(String customer) {
-        this.customer = customer;
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
     }
 
     public Set<OrderItem> getOrderItems() {
@@ -209,7 +209,7 @@ public class ProductOrder implements Serializable {
             ", status='" + getStatus() + "'" +
             ", code='" + getCode() + "'" +
             ", invoiceId=" + getInvoiceId() +
-            ", customer='" + getCustomer() + "'" +
+            ", customerName='" + getCustomerName() + "'" +
             "}";
     }
 }

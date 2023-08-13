@@ -1,11 +1,1 @@
-id;placed_date;status;code;invoice_id;customer;customer_id
-1;2022-10-16T23:45:42;COMPLETED;Electronics;57858;calculate;1
-2;2022-10-16T22:29:32;CANCELLED;one-to-one Corporate;74608;Steel;2
-3;2022-10-16T13:56:59;CANCELLED;cross-platform Health;12251;real-time;3
-4;2022-10-16T16:43:44;CANCELLED;Hat;10576;Square revolutionize;4
-5;2022-10-16T23:47:13;CANCELLED;implement Implementation;23738;Bike;5
-6;2022-10-16T14:58:34;CANCELLED;Industrial Checking Right-sized;52549;models;6
-7;2022-10-16T15:10:42;PENDING;Implemented;30578;Home;7
-8;2022-10-16T19:09:43;CANCELLED;Handmade Automotive Principal;60178;success Liaison Riel;8
-9;2022-10-16T23:57:29;COMPLETED;National Program;95175;neural hacking;9
-10;2022-10-16T23:50:29;COMPLETED;hack Shirt Walks;57700;full-range back;10
+id;placed_date;status;code;invoice_id;customer_name;customer_id

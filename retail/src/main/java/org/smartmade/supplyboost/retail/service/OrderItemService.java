@@ -37,17 +37,6 @@ public class OrderItemService {
     }
 
     /**
-     * Update a orderItem.
-     *
-     * @param orderItem the entity to save.
-     * @return the persisted entity.
-     */
-    public OrderItem update(OrderItem orderItem) {
-        log.debug("Request to update OrderItem : {}", orderItem);
-        return orderItemRepository.save(orderItem);
-    }
-
-    /**
      * Partially update a orderItem.
      *
      * @param orderItem the entity to update partially.

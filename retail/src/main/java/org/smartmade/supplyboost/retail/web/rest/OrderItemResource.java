@@ -95,7 +95,7 @@ public class OrderItemResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        OrderItem result = orderItemService.update(orderItem);
+        OrderItem result = orderItemService.save(orderItem);
         return ResponseEntity
             .ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, orderItem.getId().toString()))
@@ -148,7 +148,7 @@ public class OrderItemResource {
     @GetMapping("/order-items")
     public ResponseEntity<List<OrderItem>> getAllOrderItems(
         @org.springdoc.api.annotations.ParameterObject Pageable pageable,
-        @RequestParam(required = false, defaultValue = "false") boolean eagerload
+        @RequestParam(required = false, defaultValue = "true") boolean eagerload
     ) {
         log.debug("REST request to get a page of OrderItems");
         Page<OrderItem> page;
