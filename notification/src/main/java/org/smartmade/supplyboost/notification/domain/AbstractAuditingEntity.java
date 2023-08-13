@@ -1,6 +1,6 @@
 package org.smartmade.supplyboost.notification.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.time.Instant;
 import org.springframework.data.annotation.CreatedBy;
@@ -13,27 +13,28 @@ import org.springframework.data.mongodb.core.mapping.Field;
  * Base abstract class for entities which will hold definitions for created, last modified, created by,
  * last modified by attributes.
  */
-@JsonIgnoreProperties(value = { "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate" }, allowGetters = true)
-public abstract class AbstractAuditingEntity<T> implements Serializable {
+public abstract class AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public abstract T getId();
-
     @CreatedBy
     @Field("created_by")
+    @JsonIgnore
     private String createdBy;
 
     @CreatedDate
     @Field("created_date")
+    @JsonIgnore
     private Instant createdDate = Instant.now();
 
     @LastModifiedBy
     @Field("last_modified_by")
+    @JsonIgnore
     private String lastModifiedBy;
 
     @LastModifiedDate
     @Field("last_modified_date")
+    @JsonIgnore
     private Instant lastModifiedDate = Instant.now();
 
     public String getCreatedBy() {

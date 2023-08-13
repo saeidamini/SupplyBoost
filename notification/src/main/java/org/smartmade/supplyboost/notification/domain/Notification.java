@@ -14,7 +14,6 @@ import org.springframework.data.mongodb.core.mapping.Field;
  */
 @Schema(description = "Entities for notification microservice")
 @Document(collection = "notification")
-@SuppressWarnings("common-java:DuplicatedBlocks")
 public class Notification implements Serializable {
 
     private static final long serialVersionUID = 1L;

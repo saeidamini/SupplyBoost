@@ -10,7 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.smartmade.supplyboost.notification.config.ApplicationProperties;
-import org.smartmade.supplyboost.notification.config.CRLFLogConverter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -84,7 +83,6 @@ public class NotificationApp {
             log.warn("The host name could not be determined, using `localhost` as fallback");
         }
         log.info(
-            CRLFLogConverter.CRLF_SAFE_MARKER,
             "\n----------------------------------------------------------\n\t" +
             "Application '{}' is running! Access URLs:\n\t" +
             "Local: \t\t{}://localhost:{}{}\n\t" +
@@ -106,7 +104,6 @@ public class NotificationApp {
             configServerStatus = "Not found or not setup for this application";
         }
         log.info(
-            CRLFLogConverter.CRLF_SAFE_MARKER,
             "\n----------------------------------------------------------\n\t" +
             "Config Server: \t{}\n----------------------------------------------------------",
             configServerStatus

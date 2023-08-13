@@ -1,1 +1,1 @@
-org.springframework.test.context.ContextCustomizerFactory = org.smartmade.supplyboost.notification.config.TestContainersSpringContextCustomizerFactory
+org.springframework.test.context.ContextCustomizerFactory = org.smartmade.supplyboost.notification.TestContainersSpringContextCustomizerFactory

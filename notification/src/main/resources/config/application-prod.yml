@@ -19,6 +19,13 @@ logging:
     tech.jhipster: INFO
     org.smartmade.supplyboost.notification: INFO
 
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: http://admin:${jhipster.registry.password}@localhost:8761/eureka/
+
 management:
   metrics:
     export:
@@ -32,11 +39,17 @@ spring:
     livereload:
       enabled: false
   cloud:
-    consul:
-      discovery:
-        prefer-ip-address: true
-      host: localhost
-      port: 8500
+    config:
+      retry:
+        initial-interval: 1000
+        max-interval: 2000
+        max-attempts: 100
+      uri: http://admin:${jhipster.registry.password}@localhost:8761/config
+      # name of the config server's property source (file.yml) that we want to use
+      name: notification
+      profile: prod
+      label: main # toggle to switch to a different version of the configuration as stored in git
+      # it can be set to any label, branch or commit of the configuration source Git repository
   data:
     mongodb:
       uri: mongodb://localhost:27017
@@ -63,7 +76,7 @@ spring:
 # keytool -genkey -alias notification -storetype PKCS12 -keyalg RSA -keysize 2048 -keystore keystore.p12 -validity 3650
 #
 # You can also use Let's Encrypt:
-# See details in topic "Create a Java Keystore (.JKS) from Let's Encrypt Certificates" on https://maximilian-boehm.com/en-gb/blog
+# https://maximilian-boehm.com/hp2121/Create-a-Java-Keystore-JKS-from-Let-s-Encrypt-Certificates.htm
 #
 # Then, modify the server.ssl properties so your "server" configuration looks like:
 #
@@ -95,18 +108,8 @@ jhipster:
   http:
     cache: # Used by the CachingHttpHeadersFilter
       timeToLiveInDays: 1461
-  security:
-    authentication:
-      jwt:
-        # This token must be encoded using Base64 and be at least 256 bits long (you can type `openssl rand -base64 64` on your command line to generate a 512 bits one)
-        # As this is the PRODUCTION configuration, you MUST change the default key, and store it securely:
-        # - In the JHipster Registry (which includes a Spring Cloud Config server)
-        # - In a separate `application-prod.yml` file, in the same folder as your executable JAR file
-        # - In the `JHIPSTER_SECURITY_AUTHENTICATION_JWT_BASE64_SECRET` environment variable
-        base64-secret: NDIzZGNkMGZmNzA4ZDk1YmEzNzg0Y2M4ZTljYTQzMzQ5NmRlMDg5NjkxOGMyNmY1Mzc1Njc5NWNkYWEzM2YzMzMyOTFjMDYwZmE5YjJiNmUxZGQ4NTU5YmJkMzZhMTdjYWQ5ZTVkNWI2YTU5MWE0MjIxYTA2MzFhMzQxZTM1NTc=
-        # Token is valid 24 hours
-        token-validity-in-seconds: 86400
-        token-validity-in-seconds-for-remember-me: 2592000
+  registry:
+    password: admin
   logging:
     use-json-format: false # By default, logs are not in Json format
     logstash: # Forward logs to logstash over a socket, used by LoggingConfiguration

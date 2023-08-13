@@ -47,6 +47,20 @@ class WebConfigurerTest {
     }
 
     @Test
+    void shouldStartUpProdServletContext() throws ServletException {
+        env.setActiveProfiles(JHipsterConstants.SPRING_PROFILE_PRODUCTION);
+
+        assertThatCode(() -> webConfigurer.onStartup(servletContext)).doesNotThrowAnyException();
+    }
+
+    @Test
+    void shouldStartUpDevServletContext() throws ServletException {
+        env.setActiveProfiles(JHipsterConstants.SPRING_PROFILE_DEVELOPMENT);
+
+        assertThatCode(() -> webConfigurer.onStartup(servletContext)).doesNotThrowAnyException();
+    }
+
+    @Test
     void shouldCorsFilterOnApiPath() throws Exception {
         props.getCors().setAllowedOrigins(Collections.singletonList("other.domain.com"));
         props.getCors().setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
