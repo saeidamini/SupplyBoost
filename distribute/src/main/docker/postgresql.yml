@@ -2,7 +2,7 @@
 version: '3.8'
 services:
   distribute-postgresql:
-    image: postgres:14.5
+    image: postgres:14.5-alpine
     # volumes:
     #   - ~/volumes/jhipster/distribute/postgresql/:/var/lib/postgresql/data/
     environment:

@@ -39,13 +39,13 @@ services:
       - echo "`ip route | grep default | cut -d ' ' -f3` host.docker.internal" | tee -a /etc/hosts > /dev/null && java -jar /jhipster-control-center.jar
     environment:
       - _JAVA_OPTIONS=-Xmx512m -Xms256m
-      - SPRING_PROFILES_ACTIVE=prod,api-docs,true
+      - SPRING_PROFILES_ACTIVE=prod,api-docs,eureka,oauth2
       - JHIPSTER_SLEEP=30 # gives time for other services to boot before the application
-      - SPRING_SECURITY_USER_PASSWORD=admin
-      # The token should have the same value than the one declared in you Spring configuration under the jhipster.security.authentication.jwt.base64-secret configuration's entry
-      - JHIPSTER_SECURITY_AUTHENTICATION_JWT_BASE64_SECRET=MWQ1MzhmODI2MjViMWRkYjg0Yzk3N2YyM2E3YzU5YmM3OGZmYTg3YzliYWRkMDFkMjE5YWNlMzg3Mzc1ZTcxMDVmYWVjZmZlZmY3Yzg1NDNmMDQ0YjI4ZGYxYzg1YjMzMTM2OWVlODRiOGFlYTM1Mzk5OGQxNGNjZGRkY2JkYjk=
-      - SPRING_CLOUD_CONSUL_HOST=host.docker.internal
-      - SPRING_CLOUD_CONSUL_PORT=8500
+      # For keycloak to work, you need to add '127.0.0.1 keycloak' to your hosts file
+      - SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI=http://keycloak:9080/auth/realms/jhipster
+      - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_ID=jhipster-control-center
+      - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_SECRET=jhipster-control-center
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://admin:admin@host.docker.internal:8761/eureka/
       - LOGGING_FILE_NAME=/tmp/jhipster-control-center.log
     # If you want to expose these ports outside your dev PC,
     # remove the "127.0.0.1:" prefix
