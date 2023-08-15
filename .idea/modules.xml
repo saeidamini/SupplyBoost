@@ -3,6 +3,10 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/SupplyBoost.iml" filepath="$PROJECT_DIR$/.idea/SupplyBoost.iml" />
+      <module fileurl="file://$PROJECT_DIR$/core/core.iml" filepath="$PROJECT_DIR$/core/core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/distribute/distribute.iml" filepath="$PROJECT_DIR$/distribute/distribute.iml" />
+      <module fileurl="file://$PROJECT_DIR$/notification/notification.iml" filepath="$PROJECT_DIR$/notification/notification.iml" />
+      <module fileurl="file://$PROJECT_DIR$/retail/retail.iml" filepath="$PROJECT_DIR$/retail/retail.iml" />
     </modules>
   </component>
 </project>
