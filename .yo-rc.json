@@ -1,9 +1,0 @@
-{
-  "generator-jhipster": {
-    "baseName": "workspaces",
-    "clientPackageManager": "npm",
-    "dockerCompose": true,
-    "jhipsterVersion": "7.7.0",
-    "packages": ["core", "retail", "distribute", "notification"]
-  }
-}
