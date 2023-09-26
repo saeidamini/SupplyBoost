@@ -1,9 +1,19 @@
 # SupplyBoost
+![Banner](resource/banner.jpg)
+SupplyBoost is a supply chain management application.
+As an aspiring software developer, I'm always reading about new technologies and architectures - microservices, event streaming, crazy cloud stuff. It gets my nerd juices flowing!
 
-SupplyBoost is a supply chain management application that has one Gateway and five Microservice. 
-This application uses eureka for service discovery and [OAuth 2.0](https://oauth.net/2/) for authentication.
+But when it comes time to build something in the real-world, I struggle to put all these concepts together. Most projects are too small and I end up hacking things the old-fashioned way.
 
-![Supply Chain Process](resource/SupplyChainProcess.drawio.svg)
+I know many of you face the same dilemma - you kinda know this tech but haven't really built anything meaningful with it.
+
+So I started SupplyBoost to fix that! It's an ambitious supply chain app that lets me throw every book I've read at it! Microservices, check! Serverless, check! It's a cool playground to go wild!
+
+No more toy apps and todo lists. This is the real deal - a complex beast that helps me level up my skills as an architect and developer. Sure I'll make ton of mistakes on the way, but that's how we learn 💪
+
+In the process, I hope to turn all these buzzwords into practical skills that can be applied to big real-world projects. No more hacky duct tape code!
+
+So come join me on this journey! It's gonna be challenging but oh so rewarding. Let's turn theory into practice. Who's with me? 🚀
 
 ## SupplyBoost's modules/Microservice
 
@@ -18,22 +28,6 @@ SupplyBoost have these modules:
     - They receive the requests and send them to the factories (use by Supplier).
 - **Manufacture**
     - They Plan for Production (use by Manufacture).
-
-## Main Workflow
-SupplyBoost consists of several work flow. 
-
-### Buy Products from Retailer
-
-Customer view products on the Retail site and create ProductOrder for buying. If the Retailer has products in Stock,  
-create an Invoice for the Delivery Company. Workflow has been finished when delivered products to Customer.
-
-![Buy Product From Retail](resource/BuyProductFromRetail.svg)
-
-**Hint: Each node have 4 parts.** 
-  - Action
-  - Entity 
-  - Module (Microservice)
-  - Description
 
 # Getting Started
 
