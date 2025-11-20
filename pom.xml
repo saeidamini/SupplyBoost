@@ -9,7 +9,5 @@
     <name>supplyboost</name>
     <modules>
         <module>core</module>
-        <module>notify</module>
-        <module>shop</module>
     </modules>
 </project>
