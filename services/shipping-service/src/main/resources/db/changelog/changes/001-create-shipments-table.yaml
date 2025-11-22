@@ -1,0 +1,146 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-shipments-table
+      author: supplyboost
+      changes:
+        - createTable:
+            tableName: shipments
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: shipment_id
+                  type: VARCHAR(100)
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tracking_number
+                  type: VARCHAR(100)
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: order_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: order_number
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: carrier
+                  type: VARCHAR(50)
+                  defaultValue: 'STANDARD'
+              - column:
+                  name: service_type
+                  type: VARCHAR(50)
+                  defaultValue: 'GROUND'
+              - column:
+                  name: estimated_delivery
+                  type: TIMESTAMP
+              - column:
+                  name: actual_delivery
+                  type: TIMESTAMP
+              - column:
+                  name: recipient_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: recipient_email
+                  type: VARCHAR(255)
+              - column:
+                  name: recipient_phone
+                  type: VARCHAR(50)
+              - column:
+                  name: address_line1
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: address_line2
+                  type: VARCHAR(255)
+              - column:
+                  name: city
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: state
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: postal_code
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: country
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: notes
+                  type: TEXT
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: shipped_at
+                  type: TIMESTAMP
+
+  - changeSet:
+      id: 001-create-indexes
+      author: supplyboost
+      changes:
+        - createIndex:
+            tableName: shipments
+            indexName: idx_shipments_order_id
+            columns:
+              - column:
+                  name: order_id
+        - createIndex:
+            tableName: shipments
+            indexName: idx_shipments_user_id
+            columns:
+              - column:
+                  name: user_id
+        - createIndex:
+            tableName: shipments
+            indexName: idx_shipments_status
+            columns:
+              - column:
+                  name: status
+        - createIndex:
+            tableName: shipments
+            indexName: idx_shipments_tracking_number
+            columns:
+              - column:
+                  name: tracking_number

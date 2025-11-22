@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #2196F3;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px 5px 0 0;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 30px;
+            border: 1px solid #ddd;
+            border-radius: 0 0 5px 5px;
+        }
+        .payment-details {
+            background-color: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            border: 1px solid #e0e0e0;
+        }
+        .payment-number {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2196F3;
+            margin: 10px 0;
+        }
+        .success-badge {
+            background-color: #4CAF50;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .detail-row {
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .detail-label {
+            font-weight: bold;
+            display: inline-block;
+            width: 150px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #777;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Payment Received!</h1>
+    </div>
+
+    <div class="content">
+        <p>Dear <span th:text="${customerName}">Customer</span>,</p>
+
+        <div class="success-badge">✓ Payment Successful</div>
+
+        <p>Great news! We've successfully received your payment. Your order will be prepared for shipment shortly.</p>
+
+        <div class="payment-details">
+            <div class="payment-number" th:text="'Payment #' + ${paymentNumber}">Payment #PAY-123456</div>
+
+            <div class="detail-row">
+                <span class="detail-label">Order Number:</span>
+                <span th:text="${orderNumber}">ORD-123456</span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Payment Method:</span>
+                <span th:text="${paymentMethod}">Credit Card</span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Amount Paid:</span>
+                <span th:text="'$' + ${amount}">$99.99</span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Payment Date:</span>
+                <span th:text="${#temporals.format(paymentDate, 'MMM dd, yyyy HH:mm')}">Jan 01, 2024 10:35</span>
+            </div>
+        </div>
+
+        <p><strong>What Happens Next?</strong></p>
+        <ul>
+            <li>Your order is now being prepared for shipment</li>
+            <li>You'll receive a shipping confirmation email with tracking information once your order ships</li>
+            <li>You can track your order status anytime</li>
+        </ul>
+
+        <p>Thank you for your business!</p>
+    </div>
+
+    <div class="footer">
+        <p>© 2024 SupplyBoost. All rights reserved.</p>
+        <p>This is an automated email, please do not reply directly to this message.</p>
+    </div>
+</body>
+</html>

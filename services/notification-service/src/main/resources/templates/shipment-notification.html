@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shipment Notification</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #FF9800;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px 5px 0 0;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 30px;
+            border: 1px solid #ddd;
+            border-radius: 0 0 5px 5px;
+        }
+        .shipment-details {
+            background-color: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            border: 1px solid #e0e0e0;
+        }
+        .tracking-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #FF9800;
+            margin: 15px 0;
+            padding: 15px;
+            background-color: #fff3e0;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .detail-row {
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .detail-label {
+            font-weight: bold;
+            display: inline-block;
+            width: 150px;
+        }
+        .track-button {
+            background-color: #FF9800;
+            color: white;
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #777;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📦 Your Order Has Shipped!</h1>
+    </div>
+
+    <div class="content">
+        <p>Dear <span th:text="${recipientName}">Customer</span>,</p>
+
+        <p>Exciting news! Your order has been shipped and is on its way to you.</p>
+
+        <div class="shipment-details">
+            <div class="detail-row">
+                <span class="detail-label">Order Number:</span>
+                <span th:text="${orderNumber}">ORD-123456</span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Shipment Number:</span>
+                <span th:text="${shipmentNumber}">SHIP-123456</span>
+            </div>
+
+            <div class="tracking-number">
+                <div style="font-size: 14px; color: #666; margin-bottom: 5px;">Tracking Number</div>
+                <span th:text="${trackingNumber}">1Z999AA10123456784</span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Carrier:</span>
+                <span th:text="${carrier}">UPS</span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Estimated Delivery:</span>
+                <span th:text="${#temporals.format(estimatedDelivery, 'MMM dd, yyyy')}">Jan 05, 2024</span>
+            </div>
+        </div>
+
+        <div style="text-align: center;">
+            <a href="#" class="track-button">Track Your Package</a>
+        </div>
+
+        <p><strong>Delivery Information:</strong></p>
+        <ul>
+            <li>Your package is currently in transit</li>
+            <li>Estimated delivery: <span th:text="${#temporals.format(estimatedDelivery, 'EEEE, MMM dd, yyyy')}">Monday, Jan 05, 2024</span></li>
+            <li>You'll receive updates as your package moves through the delivery network</li>
+        </ul>
+
+        <p>Thank you for choosing SupplyBoost. We hope you enjoy your purchase!</p>
+    </div>
+
+    <div class="footer">
+        <p>© 2024 SupplyBoost. All rights reserved.</p>
+        <p>This is an automated email, please do not reply directly to this message.</p>
+    </div>
+</body>
+</html>

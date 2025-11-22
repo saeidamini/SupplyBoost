@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px 5px 0 0;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 30px;
+            border: 1px solid #ddd;
+            border-radius: 0 0 5px 5px;
+        }
+        .order-details {
+            background-color: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            border: 1px solid #e0e0e0;
+        }
+        .order-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4CAF50;
+            margin: 10px 0;
+        }
+        .detail-row {
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .detail-label {
+            font-weight: bold;
+            display: inline-block;
+            width: 150px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #777;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Thank You for Your Order!</h1>
+    </div>
+
+    <div class="content">
+        <p>Dear <span th:text="${customerName}">Customer</span>,</p>
+
+        <p>We're excited to confirm that we've received your order. Your order is now being processed and will be shipped soon.</p>
+
+        <div class="order-details">
+            <div class="order-number" th:text="'Order #' + ${orderNumber}">Order #ORD-123456</div>
+
+            <div class="detail-row">
+                <span class="detail-label">Order Date:</span>
+                <span th:text="${#temporals.format(orderDate, 'MMM dd, yyyy HH:mm')}">Jan 01, 2024 10:30</span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Total Amount:</span>
+                <span th:text="'$' + ${totalAmount}">$99.99</span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Status:</span>
+                <span th:text="${status}">PENDING</span>
+            </div>
+        </div>
+
+        <p><strong>What's Next?</strong></p>
+        <ul>
+            <li>We'll process your payment shortly</li>
+            <li>Once payment is confirmed, we'll prepare your order for shipment</li>
+            <li>You'll receive a shipping confirmation email with tracking details</li>
+        </ul>
+
+        <p>If you have any questions about your order, please don't hesitate to contact our support team.</p>
+
+        <p>Thank you for choosing SupplyBoost!</p>
+    </div>
+
+    <div class="footer">
+        <p>© 2024 SupplyBoost. All rights reserved.</p>
+        <p>This is an automated email, please do not reply directly to this message.</p>
+    </div>
+</body>
+</html>

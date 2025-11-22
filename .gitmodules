@@ -1,6 +1,0 @@
-[submodule "shop"]
-	path = shop
-	url = https://github.com/saeidamini/eShopOnContainers-Java
-[submodule "account"]
-	path = account
-	url = https://github.com/saeidamini/accounting-service

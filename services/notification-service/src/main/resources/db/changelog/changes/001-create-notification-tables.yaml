@@ -1,0 +1,101 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-notification-history-table
+      author: supplyboost
+      changes:
+        - createTable:
+            tableName: notification_history
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: notification_type
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: recipient_email
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: recipient_name
+                  type: varchar(255)
+
+              - column:
+                  name: subject
+                  type: varchar(500)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: status
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: failure_reason
+                  type: text
+
+              - column:
+                  name: retry_count
+                  type: integer
+                  defaultValue: 0
+
+              - column:
+                  name: order_number
+                  type: varchar(50)
+
+              - column:
+                  name: payment_number
+                  type: varchar(50)
+
+              - column:
+                  name: tracking_number
+                  type: varchar(50)
+
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: sent_at
+                  type: timestamp
+
+        - createIndex:
+            tableName: notification_history
+            indexName: idx_notification_recipient_email
+            columns:
+              - column:
+                  name: recipient_email
+
+        - createIndex:
+            tableName: notification_history
+            indexName: idx_notification_order_number
+            columns:
+              - column:
+                  name: order_number
+
+        - createIndex:
+            tableName: notification_history
+            indexName: idx_notification_status
+            columns:
+              - column:
+                  name: status
+
+        - createIndex:
+            tableName: notification_history
+            indexName: idx_notification_created_at
+            columns:
+              - column:
+                  name: created_at

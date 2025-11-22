@@ -1,0 +1,131 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-payments-table
+      author: supplyboost
+      changes:
+        - createTable:
+            tableName: payments
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: payment_id
+                  type: VARCHAR(100)
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: order_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: order_number
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: amount
+                  type: DECIMAL(10,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: currency
+                  type: VARCHAR(3)
+                  defaultValue: 'USD'
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: payment_method
+                  type: VARCHAR(50)
+              - column:
+                  name: payment_provider
+                  type: VARCHAR(50)
+                  defaultValue: 'STRIPE'
+              - column:
+                  name: stripe_payment_intent_id
+                  type: VARCHAR(255)
+              - column:
+                  name: stripe_client_secret
+                  type: VARCHAR(255)
+              - column:
+                  name: stripe_charge_id
+                  type: VARCHAR(255)
+              - column:
+                  name: customer_email
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: customer_name
+                  type: VARCHAR(255)
+              - column:
+                  name: description
+                  type: TEXT
+              - column:
+                  name: failure_reason
+                  type: TEXT
+              - column:
+                  name: refund_id
+                  type: VARCHAR(255)
+              - column:
+                  name: refunded_amount
+                  type: DECIMAL(10,2)
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: processed_at
+                  type: TIMESTAMP
+
+  - changeSet:
+      id: 001-create-indexes
+      author: supplyboost
+      changes:
+        - createIndex:
+            tableName: payments
+            indexName: idx_payments_order_id
+            columns:
+              - column:
+                  name: order_id
+        - createIndex:
+            tableName: payments
+            indexName: idx_payments_user_id
+            columns:
+              - column:
+                  name: user_id
+        - createIndex:
+            tableName: payments
+            indexName: idx_payments_status
+            columns:
+              - column:
+                  name: status
+        - createIndex:
+            tableName: payments
+            indexName: idx_payments_created_at
+            columns:
+              - column:
+                  name: created_at

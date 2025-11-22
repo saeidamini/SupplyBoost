@@ -1,0 +1,239 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-invoices-table
+      author: supplyboost
+      changes:
+        - createTable:
+            tableName: invoices
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: invoice_number
+                  type: varchar(50)
+                  constraints:
+                    unique: true
+                    nullable: false
+
+              - column:
+                  name: order_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: order_number
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: user_id
+                  type: bigint
+
+              - column:
+                  name: customer_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: customer_email
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: subtotal
+                  type: decimal(10,2)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: tax_amount
+                  type: decimal(10,2)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: tax_rate
+                  type: decimal(5,4)
+
+              - column:
+                  name: total_amount
+                  type: decimal(10,2)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: status
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: shipment_id
+                  type: bigint
+
+              - column:
+                  name: shipment_number
+                  type: varchar(50)
+
+              - column:
+                  name: payment_id
+                  type: varchar(50)
+
+              - column:
+                  name: pdf_file_path
+                  type: varchar(500)
+
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: updated_at
+                  type: timestamp
+
+              - column:
+                  name: due_date
+                  type: timestamp
+
+              - column:
+                  name: paid_at
+                  type: timestamp
+
+        - createIndex:
+            tableName: invoices
+            indexName: idx_invoice_order_id
+            columns:
+              - column:
+                  name: order_id
+
+        - createIndex:
+            tableName: invoices
+            indexName: idx_invoice_order_number
+            columns:
+              - column:
+                  name: order_number
+
+        - createIndex:
+            tableName: invoices
+            indexName: idx_invoice_customer_email
+            columns:
+              - column:
+                  name: customer_email
+
+        - createIndex:
+            tableName: invoices
+            indexName: idx_invoice_status
+            columns:
+              - column:
+                  name: status
+
+  - changeSet:
+      id: 002-create-revenue-recognition-table
+      author: supplyboost
+      changes:
+        - createTable:
+            tableName: revenue_recognition
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: invoice_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: invoice_number
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: order_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: order_number
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: amount
+                  type: decimal(10,2)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: recognition_date
+                  type: timestamp
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: recognition_type
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: status
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: notes
+                  type: text
+
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+
+        - createIndex:
+            tableName: revenue_recognition
+            indexName: idx_revenue_invoice_id
+            columns:
+              - column:
+                  name: invoice_id
+
+        - createIndex:
+            tableName: revenue_recognition
+            indexName: idx_revenue_order_id
+            columns:
+              - column:
+                  name: order_id
+
+        - createIndex:
+            tableName: revenue_recognition
+            indexName: idx_revenue_recognition_date
+            columns:
+              - column:
+                  name: recognition_date
+
+        - createIndex:
+            tableName: revenue_recognition
+            indexName: idx_revenue_status
+            columns:
+              - column:
+                  name: status

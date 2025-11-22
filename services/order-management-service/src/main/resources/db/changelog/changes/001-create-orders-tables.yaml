@@ -1,0 +1,209 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-orders-table
+      author: supplyboost
+      changes:
+        - createTable:
+            tableName: orders
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: order_number
+                  type: VARCHAR(100)
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: cart_id
+                  type: VARCHAR(100)
+              - column:
+                  name: status
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: total_amount
+                  type: DECIMAL(10,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: currency
+                  type: VARCHAR(3)
+                  defaultValue: 'USD'
+                  constraints:
+                    nullable: false
+              - column:
+                  name: shipping_address_line1
+                  type: VARCHAR(255)
+              - column:
+                  name: shipping_address_line2
+                  type: VARCHAR(255)
+              - column:
+                  name: shipping_city
+                  type: VARCHAR(100)
+              - column:
+                  name: shipping_state
+                  type: VARCHAR(100)
+              - column:
+                  name: shipping_postal_code
+                  type: VARCHAR(20)
+              - column:
+                  name: shipping_country
+                  type: VARCHAR(100)
+              - column:
+                  name: billing_address_line1
+                  type: VARCHAR(255)
+              - column:
+                  name: billing_address_line2
+                  type: VARCHAR(255)
+              - column:
+                  name: billing_city
+                  type: VARCHAR(100)
+              - column:
+                  name: billing_state
+                  type: VARCHAR(100)
+              - column:
+                  name: billing_postal_code
+                  type: VARCHAR(20)
+              - column:
+                  name: billing_country
+                  type: VARCHAR(100)
+              - column:
+                  name: customer_email
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: customer_phone
+                  type: VARCHAR(50)
+              - column:
+                  name: customer_name
+                  type: VARCHAR(255)
+              - column:
+                  name: payment_id
+                  type: VARCHAR(255)
+              - column:
+                  name: payment_status
+                  type: VARCHAR(50)
+              - column:
+                  name: payment_method
+                  type: VARCHAR(50)
+              - column:
+                  name: shipment_id
+                  type: VARCHAR(255)
+              - column:
+                  name: tracking_number
+                  type: VARCHAR(255)
+              - column:
+                  name: shipped_at
+                  type: TIMESTAMP
+              - column:
+                  name: delivered_at
+                  type: TIMESTAMP
+              - column:
+                  name: notes
+                  type: TEXT
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 001-create-order-items-table
+      author: supplyboost
+      changes:
+        - createTable:
+            tableName: order_items
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: order_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: product_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: product_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: product_sku
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: unit_price
+                  type: DECIMAL(10,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: quantity
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+              - column:
+                  name: subtotal
+                  type: DECIMAL(10,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: image_url
+                  type: VARCHAR(500)
+        - addForeignKeyConstraint:
+            baseTableName: order_items
+            baseColumnNames: order_id
+            referencedTableName: orders
+            referencedColumnNames: id
+            constraintName: fk_order_items_order
+            onDelete: CASCADE
+
+  - changeSet:
+      id: 001-create-indexes
+      author: supplyboost
+      changes:
+        - createIndex:
+            tableName: orders
+            indexName: idx_orders_user_id
+            columns:
+              - column:
+                  name: user_id
+        - createIndex:
+            tableName: orders
+            indexName: idx_orders_status
+            columns:
+              - column:
+                  name: status
+        - createIndex:
+            tableName: orders
+            indexName: idx_orders_created_at
+            columns:
+              - column:
+                  name: created_at
